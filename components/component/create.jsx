@@ -11,6 +11,8 @@ export default function Create() {
   const [rounds, setRounds] = useState(3);
   const [players, setPlayers] = useState(3);
   const { user } = useUser();
+  const [uid, setUid] = useState(0);
+
   const supabase = createClient();
 
   async function create(e) {
@@ -31,6 +33,7 @@ export default function Create() {
         },
       });
       const res = await request.json();
+      res ? setUid(res.uId) :  alert('error'+res);
       // Handle response...
     } catch (error) {
       alert(error);
@@ -76,7 +79,7 @@ export default function Create() {
               </select>
             </div>
           </div>
-          <Button type="submit" className="w-full hover:bg-slate-700"><Link href={`/room?uid=876523`}>Create</Link></Button>
+          <Button type="submit" className="w-full hover:bg-slate-700"><Link href={`/waiting?uid=${uid}`}>Create</Link></Button>
         </div>
       </form>
     </div>

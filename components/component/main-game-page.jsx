@@ -3,23 +3,84 @@ import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import styles from '@/app/create/tst.module.css'
 import { createClient } from "@/lib/supabase/config"
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
+import { useUser } from "@clerk/nextjs"
 
 export default function Rooms() {
-  const [rooms, setRooms] = useState([])
 
+  const {user} =  useUser();
+  const [rooms, setRooms] = useState([]);
+  const [uid,setUid] = useState();
   const supabse = createClient();
+  const currentUser = user?.fullName;
+  const avatar = user?.imageUrl;
+  const email = user?.emailAddresses;
+
   // Fetch all rooms on page load
   async function fetchRooms(){
     const {data,error} = await supabse.from('rooms').select();
     data ? setRooms(data) : alert("Error: ", error);
   }
 
+
+  async function checkIfNameExists(name) {
+    const { data, error } = await supabse
+      .from('users')
+      .select('*')
+      .eq('fullname', name);
+  
+    if (error) {
+      console.error('Error checking if name exists:', error.message);
+      return false;
+    }
+  
+    return data.length > 0; // Return true if name exists, false otherwise
+  }
+  // Function to insert the user's name into the database
+    async function insertNameIntoDB(name) {
+      const { data, error } = await supabse
+        .from('users')
+        .insert({fullname:name,avatar:avatar,email:email});
+
+      if (error) {
+        console.error('Error inserting name into database:', error.message);
+        return false;
+      }
+
+      return true;
+    }
+    //check user
+    async function onPageLoad(userName) {
+      const nameExists = await checkIfNameExists(userName);
+    
+      if (!nameExists) {
+        await insertNameIntoDB(userName);
+        console.log('User inserted into database:', userName);
+      } else {
+        console.log('User already exists in database:', userName);
+      }
+    }
+
+
+  async function join(e){
+    setUid(e.target.value);
+    const req = fetch('http://localhost:3000/api/join',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        action:'join',
+        player:currentUser,
+        roomId:uid,
+  }})
+  }
   useEffect(()=>{
     fetchRooms();
   },[])
+
+  
   return (
     <div
+    onScroll={onPageLoad(currentUser)}
       key="1"
       className="flex flex-col h-screen bg-gradient-to-r from-[#1b4332] to-[#2a6f97] dark:bg-gradient-to-r dark:from-[#1b4332] dark:to-[#2a6f97] "
     >
@@ -39,9 +100,10 @@ export default function Rooms() {
                     <GamepadIcon className="text-white h-6 w-6" />
                   </div>
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="px-3 py-1 bg-[#c1121f] text-white font-medium rounded-full text-sm">{room.roomstatus}</span>
-                    <Button size="sm" variant="primary">
-                      Join
+                    <span className="px-3 py-1 bg-orange-400 text-white font-medium rounded-full text-sm">{room.roomstatus}</span>
+                    <Button onClick={join}  value={room.roomUid} size="sm" variant="primary">
+                      {/* <Link   href={`/room?uuid=${room.roomUid}`}>Join</Link> */}
+                      join
                       <ArrowRightIcon className="ml-2 h-4 w-4" />
                     </Button>
                   </div>
