@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/component/main-game-page.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/component/main-game-page.jsx", "components/component/room.jsx", "components/component/aldialog.jsx", "app/api/createroom/route.ts", "components/component/create.jsx"],
   "exclude": ["node_modules"]
 }

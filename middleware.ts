@@ -6,6 +6,7 @@ import {
   const isProtectedRoute = createRouteMatcher([
     '/game(.*)',
     '/store(.*)',
+    '/room(.*)',
   ]);
    
   export default clerkMiddleware((auth, req) => {
