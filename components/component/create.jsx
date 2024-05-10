@@ -16,7 +16,7 @@ export default function Create() {
   async function create(e) {
     e.preventDefault();
     try {
-      const currentUser= user?.fullName || ''; // Get the current user's name
+      const currentUser= user?.fullName || ''; // Get the current user name
       alert(currentUser);
 
       const request = await fetch('http://localhost:3000/api/createroom', {
