@@ -19,7 +19,7 @@ export default function Rooms() {
 
   // Fetch all rooms on page load
   async function fetchRooms() {
-    const { data, error } = await supabase.from('rooms').select();
+    const { data, error } = await supabase.from('rooms').select().order('id',{ascending:false});
     data ? setRooms(data) : alert("Error: ", error);
   }
 
@@ -42,7 +42,7 @@ export default function Rooms() {
       .upsert({ fullname: name, avatar, email, userId }, 'userId'); // Unique constraint on userId
 
     if (error) {
-      console.error('Error upserting user:', error.message);
+      console.error('Er ror upserting user:', error.message);
       return false;
     }
 
@@ -105,11 +105,25 @@ export default function Rooms() {
                     <GamepadIcon className="text-white h-6 w-6" />
                   </div>
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="px-3 py-1 bg-orange-400 text-white font-medium rounded-full text-sm">{room.roomstatus}</span>
-                    <Link  value={room.roomUid} href={`waiting?uid=${room.roomUid}`} size="sm" variant="primary">
-                      join
-                      <ArrowRightIcon className="ml-2 h-4 w-4" />
-                    </Link>
+                    {
+                      room.roomstatus == 'play'?(
+                        <span className="px-3 py-1 bg-red-500 text-white font-medium rounded-full text-sm">
+                          Playing
+                        </span>
+                      ):(
+                        <>
+                          <span className="px-3 py-1 bg-orange-400 text-white font-medium rounded-full text-sm">
+                            Waiting
+                          </span>
+                          <Link className="flex items-center"  value={room.roomUid} href={`waiting?uid=${room.roomUid}`} size="sm" variant="primary">
+                            join
+                            <ArrowRightIcon className="ml-2 h-4 w-4" />
+                          </Link>
+                        </>
+                        
+                        
+                      )
+                    }
                   </div>
                 </div>
               </div>

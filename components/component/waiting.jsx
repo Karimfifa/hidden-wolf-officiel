@@ -11,6 +11,9 @@ export default function Waiting() {
 
   const [room, setRoom] = useState([]);
   const [players,setPlayers] = useState([]);
+  const [start,setStart] = useState(false);
+  const [closed , setClosed] = useState(false);
+  const [exist,setExist] = useState([]);
 
   const {user, isLoaded} = useUser();
   const currentUser = user?.fullName;
@@ -29,21 +32,57 @@ export default function Waiting() {
     if (isLoaded) {
       fetchRoomInfo();
       countPlayers();
-      playerJoined();
+      onPageLoad();
     }
     listenToPlayers();
-  },[isLoaded])
+    listenToRoomStatu();
+  },[isLoaded,start,closed])
 
 
 
   //Functions
-  async function playerJoined(){
-
-    const {data,error} = await supabase
+ // Efficiently check for existing user using userId
+ async function checkIfUserExists() {
+  const { data, error } = await supabase
     .from('players')
-    .insert({'playerId':playerId,'playerName':currentUser,'roomId':uid,'status':'ready',avatar:avatar})
-    data ? console.log('player joinde suuces')  : console.log(error);
+    .select()
+    .eq('playerId', playerId)
+    .eq('roomId',uid)
+    .single();
+
+  console.log('data'+JSON.stringify(data))
+  return data !== null; // Return true if user found, false otherwise
+}
+
+// Upsert user data using userId as the unique constraint
+async function upsertUser() {
+  const { data, error } = await supabase
+    .from('players')
+    .upsert({ playerName: currentUser, roomId:uid, avatar:avatar , playerId:playerId }, 'playerId'); // Unique constraint on userId
+
+  if (error) {
+    console.error('Er ror upserting user:', error.message);
+    return false;
   }
+
+  console.log('User upserted:', data);
+  return true;
+}
+
+// Handle user data on page load
+async function onPageLoad() {
+  if (isLoaded && currentUser && playerId) {
+    const userExists = await checkIfUserExists();
+    if (!userExists) {
+      await upsertUser();
+      console.log('User inserted:', currentUser);
+    } else {
+      console.log('User already exists:', currentUser);
+    }
+  }
+}
+
+
   //Room info 
   async function fetchRoomInfo() {
     const {data,error} = await supabase
@@ -52,6 +91,14 @@ export default function Waiting() {
     .eq('roomUid',uid)
     .single();
     data ? setRoom(data) : console.log(error);
+    if(!data){
+      router.push('/closed');
+    }
+    else{
+      if(room.roomstatus == 'play'){
+      router.push(`/room?uid=${uid}`);
+    }
+    }
     
   }
   //Count players for thi room
@@ -64,6 +111,19 @@ export default function Waiting() {
     data ? setPlayers(data) : console.log(error);
   }
 
+
+  async function startGame(){
+    const {data,error} = await supabase 
+    .from('rooms')
+    .update({roomstatus:'play'})
+    .eq('roomUid',uid);
+    if(data){
+      router.push(`/room?uid=${uid}`);
+      setStart(true);
+    }else{
+      console.log('room dont want to start'+JSON.stringify(error));
+    }
+  }
   async function quitRoom(){
     const {data,error} = await supabase
     .from('players')
@@ -77,8 +137,9 @@ export default function Waiting() {
       const {data,error} = await supabase
       .from('rooms')
       .delete()
-      .eq('roomId',uid)
-      .eq('playerName',currentUser);
+      .eq('roomUid',uid)
+      .eq('roomCreator',currentUser);
+      setClosed(true);
       router.push('/game')
     }
   }
@@ -95,6 +156,18 @@ export default function Waiting() {
     )
     .subscribe();
   }
+  async function listenToRoomStatu(){ 
+  await  supabase
+  .channel('listenToRoomStatu')
+  .on('postgres_changes',
+    {event:'*',schema:'public',table:'rooms'},
+    (payload)=>{
+      console.log('room closed or start');
+      fetchRoomInfo();
+    }
+    )
+    .subscribe();
+  }
   return (
     <div className="flex min-h-screen  w-full flex-col items-center justify-center bg-gradient-to-b from-gray-800 to-gray-950 px-4 py-8">
       <div className="mx-auto w-full max-w-md rounded-lg bg-gray-900 p-6 shadow-lg">
@@ -107,7 +180,7 @@ export default function Waiting() {
             <div className="mb-2 flex w-full items-center justify-between">
               <div className="flex items-center gap-2">
                 <UsersIcon className="h-5 w-5 text-gray-400" />
-                <span className="text-gray-300">{players.length} / {room.rounds} players in the room</span>
+                <span className="text-gray-300">{players.length} / {room.players} players in the room</span>
                 <div className="h-3 w-3 rounded-full bg-green-500" />
               </div>
               {
@@ -145,11 +218,9 @@ export default function Waiting() {
           </div>
           {
             room.roomCreator == currentUser?(
-              <Link className="w-full" href={`room?uid=${uid}`}>
-                <Button className="w-full rounded-md px-4 py-2 text-sm font-medium" variant="outline">
+                <Button onClick={startGame} className="w-full rounded-md px-4 py-2 text-sm font-medium" variant="outline">
                   Start Game
                 </Button>
-              </Link>
             ):(
               <span>Waiting...</span>
             )

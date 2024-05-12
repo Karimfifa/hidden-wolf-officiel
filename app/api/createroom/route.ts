@@ -20,6 +20,7 @@ export async function POST(req:Request){
             roomUid:uId,
             chat:chat,
             rounds:rounds,
+            players:players,
         })
         data ? console.log('Room Created')  : console.error(error);
     } catch (error) {

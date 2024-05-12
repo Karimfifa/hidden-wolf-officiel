@@ -6,15 +6,21 @@ import { Textarea } from "@/components/ui/textarea"
 import { useUser } from "@clerk/nextjs"
 import { LuVote } from "react-icons/lu";
 import { IoExitOutline } from "react-icons/io5";
+import { GiTargetShot } from "react-icons/gi";
+
+import { IoCloseCircleOutline } from "react-icons/io5";
 import Image from "next/image"
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/config";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Room() {
 
-  const [room,setRoom] = useState([])
+  const [room,setRoom] = useState([]);
+  const [players,setPlayers] = useState([]);
+  const [closed , setClosed] = useState(true);
 
   const {user,isLoaded} = useUser();
   const currentUser = user?.fullName;
@@ -23,23 +29,68 @@ export default function Room() {
   const supabase = createClient();
   const querys = useSearchParams();
 
-  const roomuid = querys.get('uid');
+  const uid = querys.get('uid');
+
+  const router = useRouter();
 
 
   useEffect(()=>{
+    if(isLoaded){
+
+    }
     fetchRoomInfo();
-  },[])
+    countPlayers();
+    roomChanges();
+
+  },[closed,isLoaded])
 
 
   async function fetchRoomInfo() {
     const {data,error} = await supabase
     .from('rooms')
     .select()
-    .match({'roomUid':roomuid})
+    .match({'roomUid':uid})
     .single();
     data ? setRoom(data) : console.log(error);
+    // room.length < 0 ? router.push('./404') : '';
+    if(!data){
+      router.push('/closed')
+    }
   }
 
+  //Count players for thi room
+  async function countPlayers(){
+    const {data,error} = await supabase
+    .from('players')
+    .select()
+    .match({'roomId':uid})
+    .order('id',{ascending:false})
+    data ? setPlayers(data) : console.log(error);
+  }
+
+  async function closeRoom(){
+    if (window.confirm("Are you sure !")){
+      const {data,error} = await supabase
+      .from('rooms')
+      .delete()
+      .eq('roomUid',uid)
+      .eq('roomCreator',currentUser);
+      setClosed(true);
+      router.push('/game')
+    }
+  }
+
+  async function roomChanges(){
+    const {data,error} = await supabase
+    .channel('roomChanges')
+    .on('postgres_changes',{event:'*',schema:'public',table:'rooms'},
+    (payload) =>{
+      fetchRoomInfo();
+      console.log('room changed');
+    }
+    )
+    .subscribe();
+  }
   return (
     <main className="flex flex-col h-screen">
       <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-950 text-white p-6 space-y-4">
@@ -49,41 +100,29 @@ export default function Room() {
             <span className="text-sm font-medium">{room.roomName}</span>
           </div>
         </div>
-        <div className="bg-gray-700 rounded-lg p-4 space-y-2">
+        {/* <div className="bg-gray-700 rounded-lg p-4 space-y-2">
           <h2 className="text-lg font-semibold">Room Rules</h2>
           <ul className="list-disc pl-6 space-y-2">
             <li>No cheating</li>
             <li>Be respectful to other players</li>
             <li>Vote for the player you think is the wolf</li>
           </ul>
-        </div>
+        </div> */}
         <div className="bg-gray-700 rounded-lg p-4 space-y-2">
-          <h2 className="text-lg font-semibold">Online Players</h2>
+          <h2 className="text-lg font-semibold">Online Players {room.players} / {players.length}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
-              <Image width={40} height={40} src={avatar}  className="w-8 h-8 bg-[#ccc] rounded-full"  />
-              <span className="text-sm font-medium">{currentUser}</span>
-            </div>
-            <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-              <span className="text-sm font-medium">Player 2</span>
-            </div>
-            <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-              <span className="text-sm font-medium">Player 3</span>
-            </div>
-            <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-              <span className="text-sm font-medium">Player 4</span>
-            </div>
-            <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-              <span className="text-sm font-medium">Player 5</span>
-            </div>
-            <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
-              <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-              <span className="text-sm font-medium">Player 6h</span>
-            </div>
+            {
+              players.map((player)=>(
+                
+                <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
+                  <Image width={40} height={40} src={player.avatar}  className="w-8 h-8 bg-[#ccc] rounded-full"  />
+                  <span className="text-sm font-medium">{player.playerName}</span>
+                  {
+                    // room.roomCreator == player.playerName ? (<GiTargetShot />) : ''
+                  }
+                </div>
+              ))
+            }
           </div>
         </div>
         <div className="relative h-[400px] w-full rounded-lg mb-56  overflow-hidden">
@@ -93,12 +132,20 @@ export default function Room() {
         </div>
       </section>
       <div className="bg-gray-700 p-4 flex justify-between space-x-4 fixed bottom-0 w-full">
-        <Link href="/">
-          <Button className="bg-[#333] hover:bg-[#333]/90 focus:ring-[#333]" variant="secondary">
-            Quit
+        {
+          room.roomCreator == currentUser ? (
+            <Button onClick={closeRoom} className="bg-[#333] hover:bg-[#333]/90 p-2 focus:ring-[#333]" variant="secondary">
+              Close room
+            <IoCloseCircleOutline />
+          </Button>
+          ):(
+            <Button className="bg-[#333] hover:bg-[#333]/90 p-2 focus:ring-[#333]" variant="secondary">
+              Quit room
             <IoExitOutline />
           </Button>
-        </Link>
+          )
+        }
+          
         <Drawer>
           <DrawerTrigger asChild>
             <Button className="bg-[#333] hover:bg-[#333]/90 focus:ring-[#333]" variant="secondary">
