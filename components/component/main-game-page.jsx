@@ -8,79 +8,84 @@ import { useUser } from "@clerk/nextjs"
 
 export default function Rooms() {
 
-  const {user} =  useUser();
+  const { user, isLoaded } = useUser();
   const [rooms, setRooms] = useState([]);
-  const [uid,setUid] = useState();
-  const supabse = createClient();
+  const [uid, setUid] = useState();
+  const supabase = createClient();
   const currentUser = user?.fullName;
   const avatar = user?.imageUrl;
-  const email = user?.emailAddresses;
+  const email = user?.primaryEmailAddressId;
+  const userId = user?.id;
 
   // Fetch all rooms on page load
-  async function fetchRooms(){
-    const {data,error} = await supabse.from('rooms').select();
+  async function fetchRooms() {
+    const { data, error } = await supabase.from('rooms').select();
     data ? setRooms(data) : alert("Error: ", error);
   }
 
-
-  async function checkIfNameExists(name) {
-    const { data, error } = await supabse
+  // Efficiently check for existing user using userId
+  async function checkIfUserExists(userId) {
+    const { data, error } = await supabase
       .from('users')
-      .select('*')
-      .eq('fullname', name);
-  
+      .select()
+      .eq('userId', userId)
+      .single();
+
+    console.log('data'+JSON.stringify(data))
+    return data !== null; // Return true if user found, false otherwise
+  }
+
+  // Upsert user data using userId as the unique constraint
+  async function upsertUser(name, avatar, email, userId) {
+    const { data, error } = await supabase
+      .from('users')
+      .upsert({ fullname: name, avatar, email, userId }, 'userId'); // Unique constraint on userId
+
     if (error) {
-      console.error('Error checking if name exists:', error.message);
+      console.error('Error upserting user:', error.message);
       return false;
     }
-  
-    return data.length > 0; // Return true if name exists, false otherwise
+
+    console.log('User upserted:', data);
+    return true;
   }
-  // Function to insert the user's name into the database
-    async function insertNameIntoDB(name) {
-      const { data, error } = await supabse
-        .from('users')
-        .insert({fullname:name,avatar:avatar,email:email});
 
-      if (error) {
-        console.error('Error inserting name into database:', error.message);
-        return false;
-      }
-
-      return true;
-    }
-    //check user
-    async function onPageLoad(userName) {
-      const nameExists = await checkIfNameExists(userName);
-    
-      if (!nameExists) {
-        await insertNameIntoDB(userName);
-        console.log('User inserted into database:', userName);
+  // Handle user data on page load
+  async function onPageLoad() {
+    if (isLoaded && currentUser && userId) {
+      const userExists = await checkIfUserExists(userId);
+      if (!userExists) {
+        await upsertUser(currentUser, avatar, email, userId);
+        console.log('User inserted:', currentUser);
       } else {
-        console.log('User already exists in database:', userName);
+        console.log('User already exists:', currentUser);
       }
     }
-
-
-  async function join(e){
-    setUid(e.target.value);
-    const req = fetch('http://localhost:3000/api/join',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        action:'join',
-        player:currentUser,
-        roomId:uid,
-  }})
   }
-  useEffect(()=>{
-    fetchRooms();
-  },[])
 
-  
+
+  async function roomsCahnge(){
+    const {data,error} = await supabase
+    .channel('rooms-check-changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'rooms'},(payload)=>{
+      fetchRooms();
+    })
+    .subscribe();
+  }
+
+  useEffect(() => {
+    if (isLoaded) {
+      onPageLoad();
+      fetchRooms();
+      roomsCahnge();
+    }
+  }, [isLoaded]); // Only run on isLoaded change
+
+
+
+
   return (
     <div
-    onScroll={onPageLoad(currentUser)}
       key="1"
       className="flex flex-col h-screen bg-gradient-to-r from-[#1b4332] to-[#2a6f97] dark:bg-gradient-to-r dark:from-[#1b4332] dark:to-[#2a6f97] "
     >
@@ -101,11 +106,10 @@ export default function Rooms() {
                   </div>
                   <div className="mt-4 flex items-center justify-between">
                     <span className="px-3 py-1 bg-orange-400 text-white font-medium rounded-full text-sm">{room.roomstatus}</span>
-                    <Button onClick={join}  value={room.roomUid} size="sm" variant="primary">
-                      {/* <Link   href={`/room?uuid=${room.roomUid}`}>Join</Link> */}
+                    <Link  value={room.roomUid} href={`waiting?uid=${room.roomUid}`} size="sm" variant="primary">
                       join
                       <ArrowRightIcon className="ml-2 h-4 w-4" />
-                    </Button>
+                    </Link>
                   </div>
                 </div>
               </div>

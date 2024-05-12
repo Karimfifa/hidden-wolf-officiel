@@ -7,6 +7,7 @@ import {
     '/game(.*)',
     '/store(.*)',
     '/room(.*)',
+    '/waiting(.*)'
   ]);
    
   export default clerkMiddleware((auth, req) => {

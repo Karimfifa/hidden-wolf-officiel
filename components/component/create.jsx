@@ -18,9 +18,7 @@ export default function Create() {
   async function create(e) {
     e.preventDefault();
     try {
-      const currentUser= user?.fullName || ''; // Get the current user name
-      alert(currentUser);
-
+      const currentUser= user?.fullName; // Get the current user name
       const request = await fetch('http://localhost:3000/api/createroom', {
         method: 'POST',
         headers: {
@@ -35,6 +33,9 @@ export default function Create() {
       const res = await request.json();
       res ? setUid(res.uId) :  alert('error'+res);
       // Handle response...
+      if(res){
+        window.location.href = '/waiting?uid='+res.uId;
+      }
     } catch (error) {
       alert(error);
     }
@@ -79,7 +80,7 @@ export default function Create() {
               </select>
             </div>
           </div>
-          <Button type="submit" className="w-full hover:bg-slate-700"><Link href={`/waiting?uid=${uid}`}>Create</Link></Button>
+          <Button type="submit" className="w-full hover:bg-slate-700">Create</Button>
         </div>
       </form>
     </div>

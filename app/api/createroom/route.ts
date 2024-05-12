@@ -18,6 +18,8 @@ export async function POST(req:Request){
             roomName:name,
             roomCreator:creator,
             roomUid:uId,
+            chat:chat,
+            rounds:rounds,
         })
         data ? console.log('Room Created')  : console.error(error);
     } catch (error) {

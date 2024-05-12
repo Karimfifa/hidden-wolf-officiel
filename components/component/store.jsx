@@ -1,25 +1,30 @@
 'use client'
 import { Button } from "@/components/ui/button"
+import { GiCoins } from "react-icons/gi";
 import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/config";
+
 export default function Store() {
   
   const [userD, setUserd]  = useState([]);
+  const [coins,setCoins] = useState()
   
   const supabase = createClient()
-  const {user} = useUser();
-  
+  const {user,isLoaded} = useUser();
+
   // Fetch user data on page
   async function userData(){
-    const currentUser = await user?.fullName;
-    alert(currentUser);
     try {
+      const currentUser = await user?.fullName;
+      const userId = await user?.id;
+
       const {data,error} = await supabase
       .from('users')
       .select()
-      .eq('fullname',currentUser)
+      .match({'fullname':currentUser,'userId':userId})
+      .single();
       data ? setUserd(data) : console.error('Error fetching data', error);
     } catch (error) {
       alert(error)
@@ -27,7 +32,7 @@ export default function Store() {
   }
   useEffect(()=>{
     userData()
-  },[])
+  },[isLoaded,user])
   return (
     <section className="w-full flex justify-center py-12 md:py-24 lg:py-32 bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-gray-50">
       <div className="container grid gap-8 px-4 md:px-6">
@@ -41,14 +46,21 @@ export default function Store() {
           <div className="flex items-center gap-4">
             <div className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-gray-50">
               <span>
+                Your coins: 
                 {
+                  // userD.map((user)=>(
+                  //   ' '+user.coins 
+                  // ))
                   userD.coins
                 }
               </span>
             </div>
-            <Button size="sm" variant="outline">
-              Buy Coins
-            </Button>
+            <Link href={'https://buy.stripe.com/test_6oE7vZ2VA99ucBW3cc'}>
+              <Button size="sm" variant="outline">
+                Buy Coins
+              </Button>
+            </Link>
+            
           </div>
         </div>
         <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
