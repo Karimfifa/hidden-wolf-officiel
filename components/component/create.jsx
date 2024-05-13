@@ -22,7 +22,7 @@ export default function Create() {
     e.preventDefault();
     try {
       const currentUser= user?.fullName; // Get the current user name
-      const request = await fetch('http://localhost:3000/api/createroom', {
+      const request = await fetch('https://hassali.vercel.app/api/createroom', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
