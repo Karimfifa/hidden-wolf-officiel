@@ -22,7 +22,6 @@ export default function Rooms() {
     const { data, error } = await supabase.from('rooms').select().order('id',{ascending:false});
     data ? setRooms(data) : alert("Error: ", error);
   }
-
   // Efficiently check for existing user using userId
   async function checkIfUserExists(userId) {
     const { data, error } = await supabase
@@ -67,18 +66,19 @@ export default function Rooms() {
   async function roomsCahnge(){
     const {data,error} = await supabase
     .channel('rooms-check-changes')
-    .on('postgres_changes',{event:'*',schema:'public',table:'rooms'},(payload)=>{
+    .on('postgres_changes',{event:'INSERT',schema:'public',table:'rooms'},(payload)=>{
       fetchRooms();
     })
     .subscribe();
   }
+  roomsCahnge();
+
 
   useEffect(() => {
     if (isLoaded) {
       onPageLoad();
-      fetchRooms();
-      roomsCahnge();
     }
+    fetchRooms();
   }, [isLoaded]); // Only run on isLoaded change
 
 

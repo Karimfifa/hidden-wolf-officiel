@@ -79,6 +79,16 @@ export default function Room() {
       router.push('/game')
     }
   }
+  //Quit room   
+  async function quitRoom(){
+    const {data,error} = await supabase
+    .from('players')
+    .delete()
+    .eq('roomId',uid)
+    .eq('playerName',currentUser);
+    router.push('/game')
+
+  }
 
   async function roomChanges(){
     const {data,error} = await supabase
@@ -91,6 +101,19 @@ export default function Room() {
     )
     .subscribe();
   }
+  async function playersChange(){
+    const {data,error} = await supabase
+    .channel('playerchange')
+    .on('postgres_changes',{event:'*',schema:'public',table:'players'},
+    (payload) =>{
+      fetchRoomInfo();
+      countPlayers();
+      console.log('room changed');
+    }
+    )
+    .subscribe();
+  }
+  playersChange();
   return (
     <main className="flex flex-col h-screen">
       <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-950 text-white p-6 space-y-4">
@@ -139,7 +162,7 @@ export default function Room() {
             <IoCloseCircleOutline />
           </Button>
           ):(
-            <Button className="bg-[#333] hover:bg-[#333]/90 p-2 focus:ring-[#333]" variant="secondary">
+            <Button onClick={quitRoom} className="bg-[#333] hover:bg-[#333]/90 p-2 focus:ring-[#333]" variant="secondary">
               Quit room
             <IoExitOutline />
           </Button>
@@ -207,33 +230,19 @@ export default function Room() {
             </DrawerHeader>
             <div className="flex-1 overflow-auto">
               <div className="space-y-4">
-                <div className="flex items-center justify-between bg-[#333] rounded-md p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-                    <span className="text-sm font-medium">Player 1</span>
-                  </div>
-                  <Button className="bg-[#0a2a4d] hover:bg-[#0a2a4d]/90 focus:ring-[#0a2a4d]" variant="primary">
-                    Vote
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between bg-[#333] rounded-md p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-                    <span className="text-sm font-medium">Player 2</span>
-                  </div>
-                  <Button className="bg-[#0a2a4d] hover:bg-[#0a2a4d]/90 focus:ring-[#0a2a4d]" variant="primary">
-                    Vote
-                  </Button>
-                </div>
-                <div className="flex items-center justify-between bg-[#333] rounded-md p-3">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-                    <span className="text-sm font-medium">Player 3</span>
-                  </div>
-                  <Button className="bg-[#0a2a4d] hover:bg-[#0a2a4d]/90 focus:ring-[#0a2a4d]" variant="primary">
-                    Vote
-                  </Button>
-                </div>
+                {
+                  players.map((player) => (
+                    <div className="flex items-center justify-between bg-[#333] rounded-md p-3">
+                      <div className="flex items-center space-x-3">
+                        <Image src={player.avatar} width={30} height={30} className="w-8 h-8 bg-[#ccc] rounded-full" />
+                        <span className="text-sm font-medium">{player.playerName}</span>
+                      </div>
+                      <Button className="bg-[#0a2a4d] hover:bg-[#0a2a4d]/90 focus:ring-[#0a2a4d]" variant="primary">
+                        Vote
+                      </Button>
+                    </div>
+                  ))
+                }
               </div>
             </div>
           </DrawerContent>

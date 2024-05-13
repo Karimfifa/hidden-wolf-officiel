@@ -11,8 +11,6 @@ export default function Waiting() {
 
   const [room, setRoom] = useState([]);
   const [players,setPlayers] = useState([]);
-  const [start,setStart] = useState(false);
-  const [closed , setClosed] = useState(false);
   const [exist,setExist] = useState([]);
 
   const {user, isLoaded} = useUser();
@@ -30,17 +28,33 @@ export default function Waiting() {
 
   useEffect(()=>{
     if (isLoaded) {
-      fetchRoomInfo();
       countPlayers();
       onPageLoad();
-    }
-    listenToPlayers();
-    listenToRoomStatu();
-  },[isLoaded,start,closed])
+   }
+   fetchRoomInfo() 
 
+  },[isLoaded])
+  
 
 
   //Functions
+  async function fetchRoomInfo() {
+    const {data,error} = await supabase
+    .from('rooms')
+    .select()
+    .eq('roomUid',uid)
+    .single();
+    if(!data){
+      alert(error)
+    }
+    else{
+      setRoom(data)
+      if(data.roomstatus == 'play'){
+      router.push(`/room?uid=${uid}`);
+    }
+    }
+    
+  }
  // Efficiently check for existing user using userId
  async function checkIfUserExists() {
   const { data, error } = await supabase
@@ -58,7 +72,7 @@ export default function Waiting() {
 async function upsertUser() {
   const { data, error } = await supabase
     .from('players')
-    .upsert({ playerName: currentUser, roomId:uid, avatar:avatar , playerId:playerId }, 'playerId'); // Unique constraint on userId
+    .upsert({ playerName: currentUser, roomId:uid, avatar:avatar , playerId:playerId }, 'playerId','playerName').single(); // Unique constraint on userId
 
   if (error) {
     console.error('Er ror upserting user:', error.message);
@@ -84,23 +98,8 @@ async function onPageLoad() {
 
 
   //Room info 
-  async function fetchRoomInfo() {
-    const {data,error} = await supabase
-    .from('rooms')
-    .select()
-    .eq('roomUid',uid)
-    .single();
-    data ? setRoom(data) : console.log(error);
-    if(!data){
-      router.push('/closed');
-    }
-    else{
-      if(room.roomstatus == 'play'){
-      router.push(`/room?uid=${uid}`);
-    }
-    }
-    
-  }
+  
+
   //Count players for thi room
   async function countPlayers(){
     const {data,error} = await supabase
@@ -117,11 +116,10 @@ async function onPageLoad() {
     .from('rooms')
     .update({roomstatus:'play'})
     .eq('roomUid',uid);
-    if(data){
-      router.push(`/room?uid=${uid}`);
-      setStart(true);
-    }else{
+    if(!data){
       console.log('room dont want to start'+JSON.stringify(error));
+    }else{
+      router.push(`/room?uid=${uid}`);
     }
   }
   async function quitRoom(){
@@ -139,6 +137,7 @@ async function onPageLoad() {
       .delete()
       .eq('roomUid',uid)
       .eq('roomCreator',currentUser);
+      quitRoom()
       setClosed(true);
       router.push('/game')
     }
@@ -156,6 +155,9 @@ async function onPageLoad() {
     )
     .subscribe();
   }
+  listenToPlayers();
+
+
   async function listenToRoomStatu(){ 
   await  supabase
   .channel('listenToRoomStatu')
@@ -168,6 +170,7 @@ async function onPageLoad() {
     )
     .subscribe();
   }
+  listenToRoomStatu();
   return (
     <div className="flex min-h-screen  w-full flex-col items-center justify-center bg-gradient-to-b from-gray-800 to-gray-950 px-4 py-8">
       <div className="mx-auto w-full max-w-md rounded-lg bg-gray-900 p-6 shadow-lg">
@@ -189,18 +192,18 @@ async function onPageLoad() {
                     Close Game
                   </Button>
                 ) : (
-                  <Button onClick={quitRoom} className="rounded-md px-4 py-2 text-sm font-medium bg-red-500 " variant="primary">
+                  <Button onClick={quitRoom} className="rounded-md px-4 py-2 text-sm font-medium bg-red-300 " variant="primary">
                     Quit Game
                   </Button>
                 )
               }
                 
             </div>
-            <div className="grid grid-cols-2 w-full items-center bg-slate-700 p-4 rounded-md gap-4">
+            <div className="grid grid-cols-2 w-full items-center p-4 rounded-md gap-4">
               {
                 players.map((player)=>(
                   <>
-                    <div className="w-full flex flex-col bg-gray-600 rounded-md p-2  ">
+                    <div key={player.id} className="w-full flex flex-col bg-gray-600 rounded-md p-2  ">
                         <Avatar>
                         <AvatarImage alt="Player 1" src={player.avatar} />
                         <AvatarFallback>P{player.id}</AvatarFallback>

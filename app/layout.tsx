@@ -25,7 +25,7 @@ export default function RootLayout({
         <body className={inter.className}>
           
         <div className="px-4 lg:px-6 h-14 flex items-center justify-between bg-gradient-to-r from-[#3B2F4A] to-[#7A5D7E]">
-        <Link className="flex items-center" href="/">
+        <Link className="flex items-center" href="/game">
           <DogIcon className="h-6 w-6" />
           <span className="">Hidden Wolf</span>
         </Link>

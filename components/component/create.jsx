@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/config";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function Create() {
@@ -15,6 +16,8 @@ export default function Create() {
 
   const supabase = createClient();
 
+
+  const router = useRouter();
   async function create(e) {
     e.preventDefault();
     try {
@@ -34,7 +37,7 @@ export default function Create() {
       res ? setUid(res.uId) :  alert('error'+res);
       // Handle response...
       if(res){
-        window.location.href = '/waiting?uid='+res.uId;
+        router.push('/waiting?uid='+res.uId);
       }
     } catch (error) {
       alert(error);
