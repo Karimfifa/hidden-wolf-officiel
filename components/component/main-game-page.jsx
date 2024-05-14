@@ -1,88 +1,91 @@
 'use client'
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import styles from '@/app/create/tst.module.css'
-import { createClient } from "@/lib/supabase/config"
-import { use, useEffect, useState } from "react"
-import { useUser } from "@clerk/nextjs"
+import { useEffect, useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/config";
 
 export default function Rooms() {
-
   const { user, isLoaded } = useUser();
   const [rooms, setRooms] = useState([]);
-  const [uid, setUid] = useState();
   const supabase = createClient();
-  const currentUser = user?.fullName;
-  const avatar = user?.imageUrl;
-  const email = user?.primaryEmailAddressId;
-  const userId = user?.id;
 
-  // Fetch all rooms on page load
+
   async function fetchRooms() {
-    const { data, error } = await supabase.from('rooms').select().order('id',{ascending:false});
-    data ? setRooms(data) : alert("Error: ", error);
-  }
-  // Efficiently check for existing user using userId
-  async function checkIfUserExists(userId) {
     const { data, error } = await supabase
-      .from('users')
+      .from('rooms')
       .select()
-      .eq('userId', userId)
-      .single();
-
-    console.log('data'+JSON.stringify(data))
-    return data !== null; // Return true if user found, false otherwise
-  }
-
-  // Upsert user data using userId as the unique constraint
-  async function upsertUser(name, avatar, email, userId) {
-    const { data, error } = await supabase
-      .from('users')
-      .upsert({ fullname: name, avatar, email, userId }, 'userId'); // Unique constraint on userId
-
+      .order('id', { ascending: false });
     if (error) {
-      console.error('Er ror upserting user:', error.message);
-      return false;
+      console.error(error);
+      return;
+    }
+    setRooms(data || []);
+  }
+  useEffect(() => {
+
+    async function roomsChange() {
+      const { data, error } = await supabase
+        .channel('rooms-check-changes')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'rooms'
+        }, (payload) => {
+          fetchRooms();
+        })
+        .subscribe();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      return () => {
+        data?.unsubscribe();
+      };
     }
 
-    console.log('User upserted:', data);
-    return true;
-  }
+    async function onPageLoad() {
+      if (isLoaded && user) {
+        const { data, error } = await supabase
+          .from('users')
+          .select()
+          .eq('userId', user.id)
+          .single();
+        
+        if (error) {
+          console.error(error);
+          return;
+        }
 
-  // Handle user data on page load
-  async function onPageLoad() {
-    if (isLoaded && currentUser && userId) {
-      const userExists = await checkIfUserExists(userId);
-      if (!userExists) {
-        await upsertUser(currentUser, avatar, email, userId);
-        console.log('User inserted:', currentUser);
-      } else {
-        console.log('User already exists:', currentUser);
+        if (!data) {
+          await upsertUser(user);
+        }
       }
     }
-  }
 
+    roomsChange();
+    onPageLoad();
+  }, [isLoaded, user]);
+  async function upsertUser(user) {
+    const { data, error } = await supabase
+      .from('users')
+      .upsert({
+        fullname: user.fullName,
+        avatar: user.imageUrl,
+        email: user.primaryEmailAddressId,
+        userId: user.id
+      }, 'userId');
 
-  async function roomsCahnge(){
-    const {data,error} = await supabase
-    .channel('rooms-check-changes')
-    .on('postgres_changes',{event:'INSERT',schema:'public',table:'rooms'},(payload)=>{
-      fetchRooms();
-    })
-    .subscribe();
-  }
-  roomsCahnge();
-
-
-  useEffect(() => {
-    if (isLoaded) {
-      onPageLoad();
+    if (error) {
+      console.error('Error upserting user:', error);
+      return;
     }
+    console.log('User upserted:', data);
+  }
+  useEffect(()=>{
     fetchRooms();
-  }, [isLoaded]); // Only run on isLoaded change
-
-
-
+  },[])
 
   return (
     <div
@@ -106,22 +109,32 @@ export default function Rooms() {
                   </div>
                   <div className="mt-4 flex items-center justify-between">
                     {
-                      room.roomstatus == 'play'?(
+                      room.roomstatus === 'play'?(
                         <span className="px-3 py-1 bg-red-500 text-white font-medium rounded-full text-sm">
                           Playing
                         </span>
-                      ):(
+                      ):room.roomstatus === 'waiting' ?(
                         <>
-                          <span className="px-3 py-1 bg-orange-400 text-white font-medium rounded-full text-sm">
-                            Waiting
+                          <span className="px-3 py-1 bg-green-400 text-white font-medium rounded-full text-sm">
+                            {room.roomstatus}
                           </span>
                           <Link className="flex items-center"  value={room.roomUid} href={`waiting?uid=${room.roomUid}`} size="sm" variant="primary">
                             join
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                           </Link>
                         </>
-                        
-                        
+                      ): room.roomstatus == 'Full' ? (
+                        <span className="px-3 py-1 bg-orange-500 text-white font-medium rounded-full text-sm">
+                          {
+                            room.roomstatus
+                          }
+                        </span>
+                      ):room.roomstatus == 'closed' ?(
+                        <span className="px-3 py-1 bg-red-700 text-white font-medium rounded-full text-sm">
+                          Finished
+                        </span>
+                      ):(
+                        <span className="px-3 py-1 bg-green-500 text-white font-medium rounded-full text-sm">Ghost Room</span>
                       )
                     }
                   </div>

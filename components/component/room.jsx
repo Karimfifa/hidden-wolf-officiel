@@ -15,12 +15,14 @@ import { createClient } from "@/lib/supabase/config";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import usePreventBackWithoutConfirmation from '@/components/hooks/preventBack'
+
 
 export default function Room() {
 
   const [room,setRoom] = useState([]);
   const [players,setPlayers] = useState([]);
-  const [closed , setClosed] = useState(true);
+  const [info,setInfo] = useState(false);
 
   const {user,isLoaded} = useUser();
   const currentUser = user?.fullName;
@@ -33,28 +35,37 @@ export default function Room() {
 
   const router = useRouter();
 
-
-  useEffect(()=>{
-    if(isLoaded){
-
-    }
-    fetchRoomInfo();
+  const path = window.location.pathname;
+  useEffect(() => {
     countPlayers();
-    roomChanges();
-
-  },[closed,isLoaded])
+  }, [isLoaded]);
+  useEffect(()=>{
+    if(info){
+      fetchRoomInfo();
+    }
+  },[info])
 
 
   async function fetchRoomInfo() {
-    const {data,error} = await supabase
-    .from('rooms')
-    .select()
-    .match({'roomUid':uid})
-    .single();
-    data ? setRoom(data) : console.log(error);
-    // room.length < 0 ? router.push('./404') : '';
-    if(!data){
-      router.push('/closed')
+    const req = await fetch('http://localhost:3000/api/fetchRoomInfo',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        uid:uid,
+      },
+      cache:'no-store'
+    })
+    const res = await req.json();
+      // alert(res.dl)
+      
+    if(!res.dl == 0){
+      setRoom(res.data)
+      if(!res.data.roomstatus == 'play'){
+        alert('Room is closed');
+        window.location.href = '/closed';
+      }
+    }else{
+      window.location.href = '/closed'
     }
   }
 
@@ -66,6 +77,9 @@ export default function Room() {
     .match({'roomId':uid})
     .order('id',{ascending:false})
     data ? setPlayers(data) : console.log(error);
+    if(data){
+      setInfo(true);
+    }
   }
 
   async function closeRoom(){
@@ -75,8 +89,10 @@ export default function Room() {
       .delete()
       .eq('roomUid',uid)
       .eq('roomCreator',currentUser);
-      setClosed(true);
-      router.push('/game')
+      if(data){
+        quitRoom();
+
+      }
     }
   }
   //Quit room   
@@ -87,13 +103,12 @@ export default function Room() {
     .eq('roomId',uid)
     .eq('playerName',currentUser);
     router.push('/game')
-
   }
 
   async function roomChanges(){
     const {data,error} = await supabase
     .channel('roomChanges')
-    .on('postgres_changes',{event:'*',schema:'public',table:'rooms'},
+    .on('postgres_changes',{event:'DELETE',schema:'public',table:'rooms'},
     (payload) =>{
       fetchRoomInfo();
       console.log('room changed');
@@ -101,6 +116,7 @@ export default function Room() {
     )
     .subscribe();
   }
+  roomChanges();
   async function playersChange(){
     const {data,error} = await supabase
     .channel('playerchange')
@@ -113,7 +129,9 @@ export default function Room() {
     )
     .subscribe();
   }
+
   playersChange();
+  usePreventBackWithoutConfirmation(quitRoom);
   return (
     <main className="flex flex-col h-screen">
       <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-950 text-white p-6 space-y-4">

@@ -1,0 +1,52 @@
+"filename", "language", "TypeScript", "JSON with Comments", "JSON", "JavaScript", "XML", "TypeScript JSX", "JavaScript JSX", "CSS", "Markdown", "Prisma", "comment", "blank", "total"
+"c:\Users\bb\Desktop\hiddenwolf\README.md", "Markdown", 0, 0, 0, 0, 0, 0, 0, 0, 26, 0, 0, 13, 39
+"c:\Users\bb\Desktop\hiddenwolf\app\api\createroom\route.ts", "TypeScript", 35, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 38
+"c:\Users\bb\Desktop\hiddenwolf\app\api\fetchRoomInfo\route.ts", "TypeScript", 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 5, 21
+"c:\Users\bb\Desktop\hiddenwolf\app\api\quitRoom\route.ts", "TypeScript", 19, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 22
+"c:\Users\bb\Desktop\hiddenwolf\app\closed\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1, 7
+"c:\Users\bb\Desktop\hiddenwolf\app\create\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\bb\Desktop\hiddenwolf\app\create\tst.module.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 1, 5
+"c:\Users\bb\Desktop\hiddenwolf\app\game\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 11, 0, 0, 0, 0, 0, 2, 13
+"c:\Users\bb\Desktop\hiddenwolf\app\globals.css", "CSS", 0, 0, 0, 0, 0, 0, 0, 29, 0, 0, 0, 5, 34
+"c:\Users\bb\Desktop\hiddenwolf\app\layout.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 93, 0, 0, 0, 0, 0, 25, 118
+"c:\Users\bb\Desktop\hiddenwolf\app\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 4, 20
+"c:\Users\bb\Desktop\hiddenwolf\app\room\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 1, 8
+"c:\Users\bb\Desktop\hiddenwolf\app\sign-in\[[...sign-in]]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 3, 15
+"c:\Users\bb\Desktop\hiddenwolf\app\sign-up\[[...sign-up]]\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 12, 0, 0, 0, 0, 0, 1, 13
+"c:\Users\bb\Desktop\hiddenwolf\app\store\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 1, 7
+"c:\Users\bb\Desktop\hiddenwolf\app\tst\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 17, 0, 0, 0, 0, 1, 4, 22
+"c:\Users\bb\Desktop\hiddenwolf\app\waiting\page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 2, 8
+"c:\Users\bb\Desktop\hiddenwolf\components.json", "JSON", 0, 0, 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 16
+"c:\Users\bb\Desktop\hiddenwolf\components\component\about-page.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 45, 0, 0, 0, 0, 24, 3, 72
+"c:\Users\bb\Desktop\hiddenwolf\components\component\aldialog.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 5, 2, 31
+"c:\Users\bb\Desktop\hiddenwolf\components\component\chat.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 62, 0, 0, 0, 0, 0, 2, 64
+"c:\Users\bb\Desktop\hiddenwolf\components\component\closed.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 25, 0, 0, 0, 0, 0, 3, 28
+"c:\Users\bb\Desktop\hiddenwolf\components\component\create.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 81, 0, 0, 0, 1, 10, 92
+"c:\Users\bb\Desktop\hiddenwolf\components\component\main-game-page.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 240, 0, 0, 0, 0, 25, 265
+"c:\Users\bb\Desktop\hiddenwolf\components\component\room.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 239, 0, 0, 0, 12, 20, 271
+"c:\Users\bb\Desktop\hiddenwolf\components\component\store.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 251, 0, 0, 0, 4, 7, 262
+"c:\Users\bb\Desktop\hiddenwolf\components\component\waiting.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 243, 0, 0, 0, 8, 37, 288
+"c:\Users\bb\Desktop\hiddenwolf\components\hooks\preventBack.jsx", "JavaScript JSX", 0, 0, 0, 0, 0, 0, 31, 0, 0, 0, 0, 6, 37
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\alert.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 127, 0, 0, 0, 0, 0, 15, 142
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\avatar.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 44, 0, 0, 0, 0, 0, 7, 51
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\button.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 51, 0, 0, 0, 0, 0, 6, 57
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\drawer.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 105, 0, 0, 0, 0, 0, 14, 119
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\input.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 21, 0, 0, 0, 0, 0, 5, 26
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\select.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 146, 0, 0, 0, 0, 0, 15, 161
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\sheet.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 125, 0, 0, 0, 0, 0, 16, 141
+"c:\Users\bb\Desktop\hiddenwolf\components\ui\textarea.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 5, 25
+"c:\Users\bb\Desktop\hiddenwolf\lib\supabase\config.ts", "TypeScript", 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 9
+"c:\Users\bb\Desktop\hiddenwolf\lib\utils.tsx", "TypeScript JSX", 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 1, 6
+"c:\Users\bb\Desktop\hiddenwolf\middleware.ts", "TypeScript", 16, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 19
+"c:\Users\bb\Desktop\hiddenwolf\next.config.js", "JavaScript", 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 5
+"c:\Users\bb\Desktop\hiddenwolf\next.config.mjs", "JavaScript", 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 1, 2, 5
+"c:\Users\bb\Desktop\hiddenwolf\package-lock.json", "JSON", 0, 0, 6335, 0, 0, 0, 0, 0, 0, 0, 0, 1, 6336
+"c:\Users\bb\Desktop\hiddenwolf\package.json", "JSON", 0, 0, 51, 0, 0, 0, 0, 0, 0, 0, 0, 1, 52
+"c:\Users\bb\Desktop\hiddenwolf\postcss.config.mjs", "JavaScript", 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 1, 2, 9
+"c:\Users\bb\Desktop\hiddenwolf\prisma\schema.prisma", "Prisma", 0, 0, 0, 0, 0, 0, 0, 0, 0, 7, 4, 4, 15
+"c:\Users\bb\Desktop\hiddenwolf\public\next.svg", "XML", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\bb\Desktop\hiddenwolf\public\placeholder.svg", "XML", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\bb\Desktop\hiddenwolf\public\vercel.svg", "XML", 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1
+"c:\Users\bb\Desktop\hiddenwolf\tailwind.config.ts", "TypeScript", 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 38
+"c:\Users\bb\Desktop\hiddenwolf\tsconfig.json", "JSON with Comments", 0, 26, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 27
+"Total", "-", 124, 26, 6402, 13, 3, 969, 1109, 33, 26, 7, 63, 295, 9070

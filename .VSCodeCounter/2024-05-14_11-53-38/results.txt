@@ -1,0 +1,110 @@
+Date : 2024-05-14 11:53:38
+Directory : c:\Users\bb\Desktop\hiddenwolf
+Total : 50 files,  8701 codes, 66 comments, 296 blanks, all 9063 lines
+
+Languages
++--------------------+------------+------------+------------+------------+------------+
+| language           | files      | code       | comment    | blank      | total      |
++--------------------+------------+------------+------------+------------+------------+
+| JSON               |          3 |      6,402 |          0 |          2 |      6,404 |
+| JavaScript JSX     |          7 |      1,100 |         33 |        108 |      1,241 |
+| TypeScript JSX     |         23 |        969 |         25 |        137 |      1,131 |
+| TypeScript         |          6 |        122 |          2 |         21 |        145 |
+| CSS                |          2 |         33 |          0 |          6 |         39 |
+| JSON with Comments |          1 |         26 |          0 |          1 |         27 |
+| Markdown           |          1 |         26 |          0 |         13 |         39 |
+| JavaScript         |          3 |         13 |          2 |          4 |         19 |
+| Prisma             |          1 |          7 |          4 |          4 |         15 |
+| XML                |          3 |          3 |          0 |          0 |          3 |
++--------------------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                   | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                      |         50 |      8,701 |         66 |        296 |      9,063 |
+| . (Files)                                                              |         10 |      6,516 |          2 |         28 |      6,546 |
+| app                                                                    |         16 |        293 |          3 |         61 |        357 |
+| app (Files)                                                            |          3 |        138 |          0 |         34 |        172 |
+| app\api                                                                |          3 |         67 |          2 |         10 |         79 |
+| app\api\createroom                                                     |          1 |         35 |          0 |          3 |         38 |
+| app\api\fetchRoomInfo                                                  |          1 |         13 |          1 |          5 |         19 |
+| app\api\quitRoom                                                       |          1 |         19 |          1 |          2 |         22 |
+| app\closed                                                             |          1 |          6 |          0 |          1 |          7 |
+| app\create                                                             |          2 |         11 |          0 |          2 |         13 |
+| app\game                                                               |          1 |         11 |          0 |          2 |         13 |
+| app\room                                                               |          1 |          7 |          0 |          1 |          8 |
+| app\sign-in                                                            |          1 |         12 |          0 |          3 |         15 |
+| app\sign-in\[[...sign-in]]                                             |          1 |         12 |          0 |          3 |         15 |
+| app\sign-up                                                            |          1 |         12 |          0 |          1 |         13 |
+| app\sign-up\[[...sign-up]]                                             |          1 |         12 |          0 |          1 |         13 |
+| app\store                                                              |          1 |          6 |          0 |          1 |          7 |
+| app\tst                                                                |          1 |         17 |          1 |          4 |         22 |
+| app\waiting                                                            |          1 |          6 |          0 |          2 |          8 |
+| components                                                             |         18 |      1,871 |         57 |        199 |      2,127 |
+| components\component                                                   |          9 |      1,201 |         57 |        110 |      1,368 |
+| components\hooks                                                       |          1 |         31 |          0 |          6 |         37 |
+| components\ui                                                          |          8 |        639 |          0 |         83 |        722 |
+| lib                                                                    |          2 |         11 |          0 |          4 |         15 |
+| lib (Files)                                                            |          1 |          5 |          0 |          1 |          6 |
+| lib\supabase                                                           |          1 |          6 |          0 |          3 |          9 |
+| prisma                                                                 |          1 |          7 |          4 |          4 |         15 |
+| public                                                                 |          3 |          3 |          0 |          0 |          3 |
++------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| filename                                                               | language           | code       | comment    | blank      | total      |
++------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+
+| c:\Users\bb\Desktop\hiddenwolf\README.md                               | Markdown           |         26 |          0 |         13 |         39 |
+| c:\Users\bb\Desktop\hiddenwolf\app\api\createroom\route.ts             | TypeScript         |         35 |          0 |          3 |         38 |
+| c:\Users\bb\Desktop\hiddenwolf\app\api\fetchRoomInfo\route.ts          | TypeScript         |         13 |          1 |          5 |         19 |
+| c:\Users\bb\Desktop\hiddenwolf\app\api\quitRoom\route.ts               | TypeScript         |         19 |          1 |          2 |         22 |
+| c:\Users\bb\Desktop\hiddenwolf\app\closed\page.tsx                     | TypeScript JSX     |          6 |          0 |          1 |          7 |
+| c:\Users\bb\Desktop\hiddenwolf\app\create\page.tsx                     | TypeScript JSX     |          7 |          0 |          1 |          8 |
+| c:\Users\bb\Desktop\hiddenwolf\app\create\tst.module.css               | CSS                |          4 |          0 |          1 |          5 |
+| c:\Users\bb\Desktop\hiddenwolf\app\game\page.tsx                       | TypeScript JSX     |         11 |          0 |          2 |         13 |
+| c:\Users\bb\Desktop\hiddenwolf\app\globals.css                         | CSS                |         29 |          0 |          5 |         34 |
+| c:\Users\bb\Desktop\hiddenwolf\app\layout.tsx                          | TypeScript JSX     |         93 |          0 |         25 |        118 |
+| c:\Users\bb\Desktop\hiddenwolf\app\page.tsx                            | TypeScript JSX     |         16 |          0 |          4 |         20 |
+| c:\Users\bb\Desktop\hiddenwolf\app\room\page.tsx                       | TypeScript JSX     |          7 |          0 |          1 |          8 |
+| c:\Users\bb\Desktop\hiddenwolf\app\sign-in\[[...sign-in]]\page.tsx     | TypeScript JSX     |         12 |          0 |          3 |         15 |
+| c:\Users\bb\Desktop\hiddenwolf\app\sign-up\[[...sign-up]]\page.tsx     | TypeScript JSX     |         12 |          0 |          1 |         13 |
+| c:\Users\bb\Desktop\hiddenwolf\app\store\page.tsx                      | TypeScript JSX     |          6 |          0 |          1 |          7 |
+| c:\Users\bb\Desktop\hiddenwolf\app\tst\page.tsx                        | TypeScript JSX     |         17 |          1 |          4 |         22 |
+| c:\Users\bb\Desktop\hiddenwolf\app\waiting\page.tsx                    | TypeScript JSX     |          6 |          0 |          2 |          8 |
+| c:\Users\bb\Desktop\hiddenwolf\components.json                         | JSON               |         16 |          0 |          0 |         16 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\about-page.tsx     | TypeScript JSX     |         45 |         24 |          3 |         72 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\aldialog.jsx       | JavaScript JSX     |         24 |          5 |          2 |         31 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\chat.tsx           | TypeScript JSX     |         62 |          0 |          2 |         64 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\closed.tsx         | TypeScript JSX     |         25 |          0 |          3 |         28 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\create.jsx         | JavaScript JSX     |         81 |          1 |         10 |         92 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\main-game-page.jsx | JavaScript JSX     |        238 |          0 |         26 |        264 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\room.jsx           | JavaScript JSX     |        221 |         11 |         20 |        252 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\store.jsx          | JavaScript JSX     |        251 |          4 |          7 |        262 |
+| c:\Users\bb\Desktop\hiddenwolf\components\component\waiting.jsx        | JavaScript JSX     |        254 |         12 |         37 |        303 |
+| c:\Users\bb\Desktop\hiddenwolf\components\hooks\preventBack.jsx        | JavaScript JSX     |         31 |          0 |          6 |         37 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\alert.tsx                 | TypeScript JSX     |        127 |          0 |         15 |        142 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\avatar.tsx                | TypeScript JSX     |         44 |          0 |          7 |         51 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\button.tsx                | TypeScript JSX     |         51 |          0 |          6 |         57 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\drawer.tsx                | TypeScript JSX     |        105 |          0 |         14 |        119 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\input.tsx                 | TypeScript JSX     |         21 |          0 |          5 |         26 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\select.tsx                | TypeScript JSX     |        146 |          0 |         15 |        161 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\sheet.tsx                 | TypeScript JSX     |        125 |          0 |         16 |        141 |
+| c:\Users\bb\Desktop\hiddenwolf\components\ui\textarea.tsx              | TypeScript JSX     |         20 |          0 |          5 |         25 |
+| c:\Users\bb\Desktop\hiddenwolf\lib\supabase\config.ts                  | TypeScript         |          6 |          0 |          3 |          9 |
+| c:\Users\bb\Desktop\hiddenwolf\lib\utils.tsx                           | TypeScript JSX     |          5 |          0 |          1 |          6 |
+| c:\Users\bb\Desktop\hiddenwolf\middleware.ts                           | TypeScript         |         16 |          0 |          3 |         19 |
+| c:\Users\bb\Desktop\hiddenwolf\next.config.js                          | JavaScript         |          5 |          0 |          0 |          5 |
+| c:\Users\bb\Desktop\hiddenwolf\next.config.mjs                         | JavaScript         |          2 |          1 |          2 |          5 |
+| c:\Users\bb\Desktop\hiddenwolf\package-lock.json                       | JSON               |      6,335 |          0 |          1 |      6,336 |
+| c:\Users\bb\Desktop\hiddenwolf\package.json                            | JSON               |         51 |          0 |          1 |         52 |
+| c:\Users\bb\Desktop\hiddenwolf\postcss.config.mjs                      | JavaScript         |          6 |          1 |          2 |          9 |
+| c:\Users\bb\Desktop\hiddenwolf\prisma\schema.prisma                    | Prisma             |          7 |          4 |          4 |         15 |
+| c:\Users\bb\Desktop\hiddenwolf\public\next.svg                         | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\bb\Desktop\hiddenwolf\public\placeholder.svg                  | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\bb\Desktop\hiddenwolf\public\vercel.svg                       | XML                |          1 |          0 |          0 |          1 |
+| c:\Users\bb\Desktop\hiddenwolf\tailwind.config.ts                      | TypeScript         |         33 |          0 |          5 |         38 |
+| c:\Users\bb\Desktop\hiddenwolf\tsconfig.json                           | JSON with Comments |         26 |          0 |          1 |         27 |
+| Total                                                                  |                    |      8,701 |         66 |        296 |      9,063 |
++------------------------------------------------------------------------+--------------------+------------+------------+------------+------------+

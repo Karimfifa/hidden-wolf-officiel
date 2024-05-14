@@ -4,8 +4,10 @@ import { createClient } from "@/lib/supabase/config";
 export async function POST(req:Request){
     const supabase = createClient();
     function generateUniqueId() {
-        return Date.now().toString(36);
-    }      
+        const timestamp = Date.now().toString(36);
+        const randomString = Math.random().toString(36).substr(2, 5); // Generate a random string of length 5
+        return timestamp + randomString;
+    }        
     const uId = generateUniqueId();
     try {
         const name = req.headers.get('name');

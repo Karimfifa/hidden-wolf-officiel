@@ -37,7 +37,7 @@ export default function Create() {
       res ? setUid(res.uId) :  alert('error'+res);
       // Handle response...
       if(res){
-        router.push('/waiting?uid='+res.uId);
+        window.location.href = '/waiting?uid='+res.uId;
       }
     } catch (error) {
       alert(error);
@@ -62,6 +62,7 @@ export default function Create() {
                 <option value="3">3</option>
                 <option value="4">4</option>
                 <option value="5">5</option>
+                <option value="2">2</option>
               </select>
             </div>
 
