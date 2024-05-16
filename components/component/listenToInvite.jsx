@@ -9,21 +9,29 @@ export default function ListenToInvite() {
 
   const [open,setOpen] = useState(false);
   const [invite , setInvite] = useState([]);
+  const [popupOpen, setPopupOpen] = useState(true);
+
 
     const { user,isLoaded } = useUser();
     const currentUser = user?.fullName;
     const playerId = user?.id;
 
+
     const supabase = createClient();
 
 
-
+    // Function to handle closing the popup
+      const handleClosePopup = () => {
+        setPopupOpen(false);
+      };
      //invitations
   async function invitations(){
     const { data, error } = await supabase
     .from('invite')
     .select()
     .eq('receiverId',playerId)
+    .order('id', { ascending: false })
+    .neq('inviterId',playerId)
     .order('id',{ascending:false});
     if(data.length > 0){
       setOpen(true);
@@ -31,7 +39,6 @@ export default function ListenToInvite() {
       setTimeout(()=>{
         setOpen(false);
       },9000)
-      // toast.info(data[0].inviterName + ' Invite you to ' + data[0].roomName);
     }
   }
   //inviite listener
@@ -48,10 +55,11 @@ export default function ListenToInvite() {
       inviteListener();
     }
   },[isLoaded])
+
   return (
     <>
     {
-      open ? <InvitationPopup sender={invite.inviterName} roomId={invite.roomId} roomName={invite.roomName} />   : null
+      open ? <InvitationPopup onClose={handleClosePopup} receiver={playerId} sender={invite.inviterName} roomId={invite.roomId} roomName={invite.roomName} />   : null
     }
         <Toaster richColors  />
 

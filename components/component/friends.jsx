@@ -169,7 +169,7 @@ export default function Friends() {
               <DialogTitle>Friend Requests</DialogTitle>
               <DialogDescription>You have {requests.length} pending friend requests .</DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 overflow-y-scroll">
+            <div className="space-y-4 overflow-y-scroll" style={{ maxHeight: "300px" }}>
               {
                 requests.map((request)=>(
                   <div className="flex items-center  justify-between bg-gray-900 p-4 rounded-md shadow-sm">

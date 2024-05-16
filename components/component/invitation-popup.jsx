@@ -1,9 +1,36 @@
+import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import Image from "next/image";
+import { createClient } from "@/lib/supabase/config";
 
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
-import Image from "next/image"
+export default function InvitationPopup({ roomId, roomName, sender, receiver, onClose }) {
+  const supabase = createClient();
 
-export default function InvitationPopup({roomId,roomName,sender}) {
+  async function removeInvitation() {
+    try {
+      await supabase
+        .from("invite")
+        .delete()
+        .eq('receiverId', receiver)
+        .eq('roomId', roomId)
+        .eq('inviterId', sender);
+    } catch (error) {
+      console.error("Error removing invitation:", error.message);
+    }
+  }
+
+  useEffect(() => {
+    // Play the notification sound
+    const audio = new Audio('/assets/invite.wav');
+    audio.play();
+  }, []);
+
+  const handleDecline = async () => {
+    await removeInvitation();
+    onClose(); // Call the onClose callback to close the popup
+  };
+
   return (
     <div>
       <div className="bg-red-400">
@@ -13,13 +40,11 @@ export default function InvitationPopup({roomId,roomName,sender}) {
             <div className="grid gap-1">
               <h3 className="text-lg font-bold">Join {sender} Room</h3>
               <p className="text-gray-500 dark:text-gray-400">
-                You've been invited by {sender} to join the {roomName} Room .
+                You've been invited by <span className="text-white">{sender}</span> to join the <span className="text-white">{roomName}</span> Room .
               </p>
             </div>
             <div className="ml-auto flex gap-2">
-              <Link href="#">
-                <Button variant="outline">Decline</Button>
-              </Link>
+              <Button onClick={handleDecline} variant="outline">Decline</Button>
               <Link href={`/waiting?uid=${roomId}`}>
                 <Button>Join</Button>
               </Link>
@@ -28,5 +53,5 @@ export default function InvitationPopup({roomId,roomName,sender}) {
         </div>
       </div>
     </div>
-  )
+  );
 }

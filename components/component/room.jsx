@@ -7,7 +7,7 @@ import { useUser } from "@clerk/nextjs"
 import { LuVote } from "react-icons/lu";
 import { IoExitOutline } from "react-icons/io5";
 import { GiTargetShot } from "react-icons/gi";
-
+import { Toaster, toast } from 'sonner'
 import { IoCloseCircleOutline } from "react-icons/io5";
 import Image from "next/image"
 import Link from "next/link";
@@ -16,7 +16,8 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import usePreventBackWithoutConfirmation from '@/components/hooks/preventBack'
-
+import { IoSendOutline } from "react-icons/io5";
+import SheepComponent from './sheeps'
 
 export default function Room() {
 
@@ -24,7 +25,11 @@ export default function Room() {
   const [players,setPlayers] = useState([]);
   const [info,setInfo] = useState(false);
 
+  const [msgs , setMsgs] =  useState([]);
+  const [msg , setMsg] =  useState("");
+
   const {user,isLoaded} = useUser();
+  const playerId = user?.id;
   const currentUser = user?.fullName;
   const avatar = user?.imageUrl;
 
@@ -35,7 +40,6 @@ export default function Room() {
 
   const router = useRouter();
 
-  const path = window.location.pathname;
   useEffect(() => {
     countPlayers();
   }, [isLoaded]);
@@ -43,6 +47,7 @@ export default function Room() {
     if(info){
       fetchRoomInfo();
     }
+
   },[info])
 
 
@@ -105,6 +110,49 @@ export default function Room() {
     router.push('/game')
   }
 
+  async function getMsgs(){
+    const {data,error} = await supabase
+    .from('chat')
+    .select()
+    .eq('roomId',uid)
+    .order('id',{ascending:false});
+    if(data){
+      setMsgs(data)
+    }
+  }
+    // Play the notification sound
+    function notification(){
+      const audio = new Audio('/assets/chat.mp3');
+      audio.play();
+    }
+  async function sendMsg(e){
+    try {
+        e.preventDefault();
+        if (!supabase) {
+            throw new Error('Supabase is not initialized');
+        }
+        const { data, error } = await supabase
+            .from('chat')
+            .insert({
+                'senderId': playerId,
+                'senderName': currentUser,
+                'senderAvatar': avatar,
+                'roomId': uid,
+                'msg': msg
+            });
+            setMsg('')
+        if (error) {
+            throw error;
+        }
+        if (data) {
+            setMsg('');
+        }
+    } catch (error) {
+        console.error('Error sending message:', error);
+    }
+}
+
+
   async function roomChanges(){
     const {data,error} = await supabase
     .channel('roomChanges')
@@ -116,7 +164,28 @@ export default function Room() {
     )
     .subscribe();
   }
-  roomChanges();
+
+  async function chatChanges(){
+    const {data,error} = await supabase
+    .channel('chat-changes')
+    .on('postgres_changes',{event:'*',schema:'public',table:'chat'},
+    (payload) =>{
+      fetchRoomInfo();
+      countPlayers();
+      getMsgs();
+      console.log('chat changed');
+      if(payload.new.senderId != playerId){
+        // alert('new message from  au ser')
+        notification();
+        toast(<div className="" ><Image className="rounded-full" alt="notiimg" width={30} height={30} src={payload.new.senderAvatar} /><br />
+          <span><i className="text-gray-400 text-xl" >{payload.new.senderName}</i></span><br />
+          <b><span>{payload.new.msg}</span></b>
+        </div>,{closeButton:true,invert:true,duration:3000,action:'good'})
+      }
+    }
+    )
+    .subscribe();
+  }
   async function playersChange(){
     const {data,error} = await supabase
     .channel('playerchange')
@@ -129,12 +198,17 @@ export default function Room() {
     )
     .subscribe();
   }
-
-  playersChange();
-  usePreventBackWithoutConfirmation(quitRoom);
+  useEffect(()=>{
+    if(isLoaded){
+      chatChanges();
+    }
+    playersChange();
+    roomChanges();
+  },[isLoaded,playerId])
+  // usePreventBackWithoutConfirmation(quitRoom);
   return (
     <main className="flex flex-col h-screen">
-      <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-950 text-white p-6 space-y-4">
+      <section className="flex-1 bg-gradient-to-br from-gray-900 to-gray-950 text-white  p-6 space-y-4">
         <div className="flex items-center justify-between">
           <div className="bg-[#333] rounded-md p-3 flex items-center space-x-3">
             <Image width={30} height={30} src={avatar} className="w-8 h-8 bg-[#ccc] rounded-full" />
@@ -166,12 +240,13 @@ export default function Room() {
             }
           </div>
         </div>
-        <div className="relative h-[400px] w-full rounded-lg mb-56  overflow-hidden">
-          <Image width={100} height={100} src={'https://img.freepik.com/free-photo/close-up-image-fresh-spring-green-grass_1232-2759.jpg?t=st=1715378481~exp=1715382081~hmac=a67669d52958d2aecef229a530ed4b851ac3a13b4e847d066404d687b319e372&w=826'} className="absolute top-0 left-0 h-full w-full rounded-md bg-gray-100 dark:bg-gray-800">
-            
-          </Image>
+        <div className="relative h-screen w-full overflow-hidden  pb-20 ">
+          {/* <Image width={100} height={100} src='/assets/farm.png' className="absolute top-0 left-0 h-full w-full rounded-md bg-gray-100 dark:bg-gray-800" />
+          <div className="sheep">sheep 1</div> */}
+          <SheepComponent roomId={uid} />
         </div>
       </section>
+      <div className="h-screen" ></div>
       <div className="bg-gray-700 p-4 flex justify-between space-x-4 fixed bottom-0 w-full">
         {
           room.roomCreator == currentUser ? (
@@ -186,7 +261,7 @@ export default function Room() {
           </Button>
           )
         }
-          
+          <Toaster />
         <Drawer>
           <DrawerTrigger asChild>
             <Button className="bg-[#333] hover:bg-[#333]/90 focus:ring-[#333]" variant="secondary">
@@ -194,42 +269,34 @@ export default function Room() {
               <IoChatbubblesOutline />
             </Button>
           </DrawerTrigger>
-          <DrawerContent className="bg-[#0a2a4d] text-white p-6 w-full max-w-md" side="left">
+          <DrawerContent className="bg-gray-400 text-white p-6 w-full max-w-md" side="left">
             <DrawerHeader>
               <DrawerTitle>Chat</DrawerTitle>
-              <DrawerDescription>Chat with other players in the game.</DrawerDescription>
+              <DrawerDescription>Hey, let's work together!</DrawerDescription>
             </DrawerHeader>
-            <div className="flex-1 overflow-auto">
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-                  <div>
-                    <p className="font-medium">Player 1</p>
-                    <p className="text-sm text-[#ccc]">Hey, let's work together!</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-                  <div>
-                    <p className="font-medium">Player 2</p>
-                    <p className="text-sm text-[#ccc]">I'm the wolf, watch out!</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3">
-                  <div className="w-8 h-8 bg-[#ccc] rounded-full" />
-                  <div>
-                    <p className="font-medium">Player 3</p>
-                    <p className="text-sm text-[#ccc]">I think Player 2 is lying.</p>
-                  </div>
-                </div>
+            <div className="flex overflow-auto" style={{ maxHeight: "400px" }}> {/* Set a fixed height and enable overflow scrolling */}
+              <div className="space-y-4 h-auto overflow-y-auto pr-2" style={{ width: "calc(100% + 16px)" }}> {/* Add padding to compensate for scrollbar */}
+                {
+                  msgs.map((msg)=>(
+                    <div className="flex items-start space-x-3 break-all" key={msg.id}> {/* Enable word break for long messages */}
+                      <Image height={30} width={30} src={msg.senderAvatar} className="w-8 h-8 bg-[#ccc] rounded-full" />
+                        <div>
+                          <p className="font-medium">@{msg.senderName}</p>
+                          <p className="text-sm text-[#ccc]">{msg.msg}</p>
+                        </div>
+                    </div>
+                  ))
+                }
               </div>
             </div>
             <DrawerFooter>
               <div className="flex items-center space-x-2">
-                <Textarea className="flex-1" placeholder="Type your message..." />
-                <Button className="bg-[#0a2a4d] hover:bg-[#0a2a4d]/90 focus:ring-[#0a2a4d]" variant="primary">
-                  Send
-                </Button>
+                <form onSubmit={sendMsg} className="flex w-full gap-1" >
+                  <input value={msg} onChange={(e)=>{setMsg(e.currentTarget.value);}} className="flex-1 rounded-md bg-gray-500 text-white outline-none p-2" placeholder="Type your message..." />
+                  <Button type="submit" className="bg-[#0a2a4d] hover:bg-[#0a2a4d]/90 focus:ring-[#0a2a4d]" variant="primary">
+                    <IoSendOutline />
+                  </Button>
+                </form>
               </div>
             </DrawerFooter>
           </DrawerContent>

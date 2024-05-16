@@ -27,6 +27,7 @@
 
     const [maxPlayers,setMaxplayers] = useState(0);
     const [currentPlayers,setCurrentplayers] = useState(0);
+    const [fulll,setFulll] = useState(false)
 
     const {user, isLoaded} = useUser();
     const currentUser = user?.fullName;
@@ -44,10 +45,6 @@
 
     const hasRunOnce = useRef(false); // Flag to track if the effect has run
 
-    async function full(statu){
-      
-
-    }
     // Get room data by UID
     async function getRoomData(){
       try {
@@ -69,7 +66,9 @@
           // .update({'roomstatus':'Full'})
           // .eq('roomUid',uid)
           // .single();
-          alert('roomISFull');
+          setFulll(true);
+        }else{
+          setFulll(false);
         }
         if(res.data.length == 0){
           router.push('/game');
@@ -218,13 +217,19 @@
         // checkMe(uid,playerId,currentUser,avatar); // Assuming this is optional
         hasRunOnce.current = true; // Set flag to prevent future runs
       }
-    }, [isLoaded]);
+    }, [isLoaded,fulll]);
     usePreventBackWithoutConfirmation(quitRoom);
 
     useEffect(()=>{
       if(rm.roomstatus == 'closed'){
         router.push('/closed')
       }
+      if(!rm.roomstatus == 'waiting'){
+        router.push('/closed')
+      }
+      // if(rm.roomstatus == 'play'){
+      //   router.push('/room?uid='+rm.roomUid);
+      // }
     },[rm.roomstatus])
 
     return (
@@ -232,7 +237,7 @@
         {
           rm.roomstatus == 'play' ? <Counter target={rm.roomUid} />: <></>
         }
-        <AlertDialog>
+        {/* <AlertDialog>
           <AlertDialogTrigger>Open</AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
@@ -246,7 +251,7 @@
               <AlertDialogAction>Continue</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog> */}
         <div className="mx-auto w-full max-w-md rounded-lg bg-gray-900 p-6 shadow-lg">
           <div className="flex flex-col  items-center justify-center gap-6">
             <div className="flex flex-col items-center gap-2">
@@ -310,7 +315,9 @@
                     <Button onClick={startGame} className="w-full rounded-md px-4 py-2 text-sm font-medium" variant="outline">
                     Start Game
                     </Button>
-                    <Invite userId={playerId} roomId={uid} inviterName={currentUser} inviterAvatar={avatar} roomName={rm.roomName} />
+                    {
+                      !fulll ? <Invite userId={playerId} roomId={uid} inviterName={currentUser} inviterAvatar={avatar} roomName={rm.roomName} /> :  <></>
+                    }
                   </div>
               ):(
                 <span>Waiting...</span>

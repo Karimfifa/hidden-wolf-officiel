@@ -8,7 +8,7 @@ const Counter = ({target}) => {
         useEffect(() => {
         const intervalId = setInterval(() => {
             if (second === 5) {
-                // router.push('/room?uid='+target);
+                router.push('/room?uid='+target);
                 return ;
             }
             setSecond(prevSecond => prevSecond + 1);
