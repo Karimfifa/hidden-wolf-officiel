@@ -7,11 +7,15 @@ import Loading  from "@/components/component/skeleton";
 import { Toaster, toast } from 'sonner'
 import ListenToInvite from '@/components/component/listenToInvite';
 import Navigation from "./navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
 
 export default function Rooms() {
   const { user, isLoaded } = useUser();
+  const currentUser = user?.fullName;
   const playerId = user?.id;
+  const avatar = user?.imageUrl;  
+  const email = user?.primaryEmailAddress;
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
@@ -29,6 +33,26 @@ export default function Rooms() {
     setRooms(data || []);
     setLoading(true);
   }
+  //user if exist
+  async function userExist(){
+    const { data, error } = await supabase
+    .from('users')
+    .select()
+    .eq('userId', playerId)
+    .single();
+    if (error) {
+      console.log('eror get players' + error)
+    }
+    if(data){
+      console.log(playerId + 'alread exist')
+    }else{
+      const { data:upsert, error:upsertError } = await supabase
+      .from('users')
+      .insert({userId:playerId,fullname:currentUser,avatar:avatar,email:email },{onConflict:'userId',ignoreDuplicates:'true'});
+      upsertError ? toast.error( 'error upsert user' + JSON.stringify(error)) : toast.success('user upsert success')
+    }
+  }
+
   useEffect(() => {
 
     async function roomsChange() {
@@ -53,47 +77,16 @@ export default function Rooms() {
       };
     }
     roomsChange();
-    async function onPageLoad() {
-      if (isLoaded && user) {
-        const { data, error } = await supabase
-          .from('users')
-          .select()
-          .eq('userId', user.id)
-          .single();
-        
-        if (error) {
-          console.error(error);
-          return;
-        }
-
-        if (!data) {
-          await upsertUser(user);
-        }
-      }
-    }
+    
 
     roomsChange();
-    onPageLoad();
   }, [isLoaded, user]);
-  async function upsertUser(user) {
-    const { data, error } = await supabase
-      .from('users')
-      .upsert({
-        fullname: user.fullName,
-        avatar: user.imageUrl,
-        email: user.primaryEmailAddressId,
-        userId: user.id
-      }, 'userId');
 
-    if (error) {
-      console.error('Error upserting user:', error);
-      return;
-    }
-    console.log('User upserted:', data);
-  }
-  
   useEffect(()=>{
     fetchRooms();
+    if(isLoaded){
+      userExist();
+    }
   },[isLoaded])
 
   return (
