@@ -17,6 +17,8 @@
     AlertDialogTitle,
     AlertDialogTrigger,
   } from "@/components/ui/alert"
+  import Counter from '@/components/component/counter'
+  import Invite from "@/components/component/invite";
 
   export default function Waiting() {
 
@@ -30,6 +32,8 @@
     const currentUser = user?.fullName;
     const avatar = user?.imageUrl;
     const playerId = user?.id;
+
+    const runOnce = useRef(false);
 
     const router = useRouter()
 
@@ -49,6 +53,7 @@
       try {
         const req = await fetch('http://localhost:3000/api/fetchRoomInfo',{
           method:'POST',
+          cache:'no-cache',
           headers:{
             'Content-Type':'application/json',
             uid:uid,
@@ -57,23 +62,19 @@
         const res = await req.json();
         setRm(res.data);
         setMaxplayers(res.data.players);
-        alert('room is' + res.full)
+        // alert('room is' + res.full)
         if(res.full === 1){
-          await supabase
-          .from('rooms')
-          .update({'roomstatus':'Full'})
-          .eq('roomUid',uid)
-          .single();
+          // await supabase
+          // .from('rooms')
+          // .update({'roomstatus':'Full'})
+          // .eq('roomUid',uid)
+          // .single();
+          alert('roomISFull');
         }
         if(res.data.length == 0){
           router.push('/game');
         }
-        if(res.data.roomstatus == 'play'){
-          router.push(`/room?uid=${uid}`);
-        }
-        if(res.data.roomstatus==  'closed'){
-          router.push('/closed')
-        }
+        
       } catch (error) {
         console.log('error fetch room info '+error);
       }
@@ -170,6 +171,7 @@
     //Start game
     async function startGame() {
       try {
+        
         const {data,error } = await supabase 
         .from('rooms')
         .update({roomstatus:'play'})
@@ -188,7 +190,7 @@
     async function playersChanges(){
       const {data,error} = await supabase
       .channel('roomPlayersChanges')
-      .on('postgres_changes',{event:'INSERT',schema:'public',table:'players'},
+      .on('postgres_changes',{event:'*',schema:'public',table:'players'},
         (payload) =>{
           getRoomData();
           getPlayerList();
@@ -219,8 +221,17 @@
     }, [isLoaded]);
     usePreventBackWithoutConfirmation(quitRoom);
 
+    useEffect(()=>{
+      if(rm.roomstatus == 'closed'){
+        router.push('/closed')
+      }
+    },[rm.roomstatus])
+
     return (
       <div className="flex min-h-screen  w-full flex-col items-center justify-center bg-gradient-to-b from-gray-800 to-gray-950 px-4 py-8">
+        {
+          rm.roomstatus == 'play' ? <Counter target={rm.roomUid} />: <></>
+        }
         <AlertDialog>
           <AlertDialogTrigger>Open</AlertDialogTrigger>
           <AlertDialogContent>
@@ -249,6 +260,7 @@
                   <span className="text-gray-300">{players.length} / {rm.players}  players in the room </span>
                   <div className="h-3 w-3 rounded-full bg-green-500" />
                 </div>
+                
                 {
                   rm.roomCreator == currentUser ? (
                     <Button onClick={closeRoom} className="rounded-md px-4 py-2 text-sm font-medium bg-red-500 " variant="primary">
@@ -263,6 +275,16 @@
                   
               </div>
               <div className="grid grid-cols-2 w-full items-center p-4 rounded-md gap-4">
+                {
+                  players.length == 0 ? (
+                    <div className="w-full flex flex-col bg-gray-500 p-2 h-10  rounded-lg">
+                      <div className=" w-4 h-4 bg-gray-600 rounded-full "></div>
+                      <div className="w-ful h-3 mt-3 bg-gray-600"></div>
+                    </div>
+                  ):(
+                    <></>
+                  )
+                }
                 {
                   players.map((player)=>(
                     <>
@@ -284,9 +306,12 @@
             </div>
             {
               rm.roomCreator == currentUser?(
-                  <Button onClick={startGame} className="w-full rounded-md px-4 py-2 text-sm font-medium" variant="outline">
+                  <div className="flex gap-2">
+                    <Button onClick={startGame} className="w-full rounded-md px-4 py-2 text-sm font-medium" variant="outline">
                     Start Game
-                  </Button>
+                    </Button>
+                    <Invite userId={playerId} roomId={uid} inviterName={currentUser} inviterAvatar={avatar} roomName={rm.roomName} />
+                  </div>
               ):(
                 <span>Waiting...</span>
               )

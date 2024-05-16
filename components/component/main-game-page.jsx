@@ -3,10 +3,17 @@ import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/config";
+import Loading  from "@/components/component/skeleton";
+import { Toaster, toast } from 'sonner'
+import ListenToInvite from '@/components/component/listenToInvite';
+import Navigation from "./navigation";
+
 
 export default function Rooms() {
   const { user, isLoaded } = useUser();
+  const playerId = user?.id;
   const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(false);
   const supabase = createClient();
 
 
@@ -20,6 +27,7 @@ export default function Rooms() {
       return;
     }
     setRooms(data || []);
+    setLoading(true);
   }
   useEffect(() => {
 
@@ -44,7 +52,7 @@ export default function Rooms() {
         data?.unsubscribe();
       };
     }
-
+    roomsChange();
     async function onPageLoad() {
       if (isLoaded && user) {
         const { data, error } = await supabase
@@ -83,19 +91,27 @@ export default function Rooms() {
     }
     console.log('User upserted:', data);
   }
+  
   useEffect(()=>{
     fetchRooms();
-  },[])
+  },[isLoaded])
 
   return (
     <div
       key="1"
       className="flex flex-col h-screen bg-gradient-to-r from-[#1b4332] to-[#2a6f97] dark:bg-gradient-to-r dark:from-[#1b4332] dark:to-[#2a6f97] "
-    >
-      
+    > 
+      <ListenToInvite />
+      <Toaster richColors  />
       <main className="flex-1 overflow-auto bg-gray-900 text-white">
         <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 md:p-8 lg:p-10">
-          
+        {
+        !loading ? <Loading />: rooms.length == 0 ?(
+          <div className="flex w-screen h-screen  items-center justify-center"> 
+          <i>            We Think We Are Hated by Peapole beacause we have <br /> 0 Rooms</i>
+          </div>
+        ): null
+        }
           {
             rooms.map((room)=>(
               <div className="bg-gradient-to-l  from-[#40916c] to-[#2a6f97] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
@@ -144,24 +160,7 @@ export default function Rooms() {
           }
         </section>
       </main>
-      <footer className=" fixed bottom-0 w-full py-4 px-6 md:px-8 lg:px-10 flex justify-center items-center gap-4 ">
-        <Link
-          href={'/create'}
-          className="bg-[#40916c] w-40 hover:bg-[#2a6f97]/90  flex p-2 items-center justify-center  rounded-md dark:bg-[#40916c] dark:hover:bg-[#2a6f97]/90"
-          variant="primary"
-        >
-          Create Room
-          <PlusIcon className="ml-2 h-4 w-4" />
-        </Link>
-        <Link
-          href={'/store'}
-          className="bg-[#40916c] w-40 hover:bg-[#2a6f97]/90 flex p-2 items-center  justify-center rounded-md dark:bg-[#40916c] dark:hover:bg-[#2a6f97]/90"
-          variant="secondary"
-        >
-          <ShoppingBagIcon className="mr-2 h-4 w-4" />
-          Store
-        </Link>
-      </footer>
+      <Navigation />
     </div>
   )
 }

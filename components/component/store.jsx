@@ -5,6 +5,8 @@ import Link from "next/link"
 import { useUser } from "@clerk/nextjs"
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/config";
+import ListenToInvite from '@/components/component/listenToInvite';
+
 
 export default function Store() {
   
@@ -35,6 +37,7 @@ export default function Store() {
   },[isLoaded,user])
   return (
     <section className="w-full flex justify-center py-12 md:py-24 lg:py-32 bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-gray-50">
+      <ListenToInvite />
       <div className="container grid gap-8 px-4 md:px-6">
         <div className="flex items-center justify-between">
           <div className="grid gap-2">

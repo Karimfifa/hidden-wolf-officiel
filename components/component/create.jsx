@@ -22,7 +22,7 @@ export default function Create() {
     e.preventDefault();
     try {
       const currentUser= user?.fullName; // Get the current user name
-      const request = await fetch('https://hassali.vercel.app/api/createroom', {
+      const request = await fetch('http://localhost:3000/api/createroom', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ export default function Create() {
       res ? setUid(res.uId) :  alert('error'+res);
       // Handle response...
       if(res){
-        window.location.href = '/waiting?uid='+res.uId;
+        router.push('/waiting?uid='+res.uId);
       }
     } catch (error) {
       alert(error);
@@ -46,7 +46,7 @@ export default function Create() {
 
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
+    <div className="flex flex-col p-3 items-center justify-center h-screen bg-gradient-to-br from-gray-900 to-gray-950 text-white">
       <form onSubmit={create} className="w-full max-w-md">
         <div className="max-w-md w-full space-y-6">
           <div className="text-center">

@@ -150,7 +150,7 @@ export default function Room() {
           </ul>
         </div> */}
         <div className="bg-gray-700 rounded-lg p-4 space-y-2">
-          <h2 className="text-lg font-semibold">Online Players {room.players} / {players.length}</h2>
+          <h2 className="text-lg font-semibold">Online Players {players.length}/{room.players}  </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {
               players.map((player)=>(

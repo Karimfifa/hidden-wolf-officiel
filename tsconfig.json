@@ -21,6 +21,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/component/main-game-page.jsx", "components/component/room.jsx", "components/component/aldialog.jsx", "app/api/createroom/route.ts", "components/component/create.jsx", "components/component/waiting.jsx", "components/component/store.jsx", "app/api/fetchRoomInfo/route.js", "app/tst/page.tsx", "components/hooks/preventBack.jsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/component/main-game-page.jsx", "components/component/room.jsx", "components/component/aldialog.jsx", "app/api/createroom/route.ts", "components/component/create.jsx", "components/component/waiting.jsx", "components/component/store.jsx", "app/api/fetchRoomInfo/route.js", "app/tst/page.tsx", "components/hooks/preventBack.jsx", "components/component/skeleton.jsx", "components/component/friends.jsx", "components/component/invite.jsx", "components/component/invitation-popup.jsx", "components/component/navigation.jsx"],
   "exclude": ["node_modules"]
 }
