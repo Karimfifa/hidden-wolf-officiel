@@ -143,7 +143,8 @@
         const {data,error } = await supabase 
         .from('players')
         .delete()
-        .eq('playerName',currentUser);
+        .eq('playerId',playerId)
+        .eq('roomId',uid);
         if (error) throw error('error for quit room' + error);
         data ? console.log('you quited') : console.log('No Data Found');
         window.location.href= '/game';
@@ -183,7 +184,15 @@
     }
 
 
-
+    // Play the join sound
+    function joinSound(){
+      const audio = new Audio('/assets/join.wav');
+      audio.play();
+  }// Play the out sound
+  function outSound(){
+    const audio = new Audio('/assets/out.wav');
+    audio.play();
+}
 
     //Room Players change
     async function playersChanges(){
@@ -191,6 +200,13 @@
       .channel('roomPlayersChanges')
       .on('postgres_changes',{event:'*',schema:'public',table:'players'},
         (payload) =>{
+          if (payload.new.roomId === uid){
+            joinSound();
+          }
+          else if(payload.eventType == 'DELETE' && payload.new.roomId == uid)  {
+            outSound()
+          }
+          console.log(payload)
           getRoomData();
           getPlayerList();
         }

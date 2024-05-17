@@ -201,6 +201,7 @@ export default function Room() {
   useEffect(()=>{
     if(isLoaded){
       chatChanges();
+
     }
     playersChange();
     roomChanges();

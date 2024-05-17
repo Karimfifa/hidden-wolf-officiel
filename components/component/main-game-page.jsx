@@ -32,6 +32,8 @@ export default function Rooms() {
     }
     setRooms(data || []);
     setLoading(true);
+    // const werewolfIndex = Math.floor(Math.random() * rooms.length);
+    //   alert('num '+werewolfIndex)
   }
   //user if exist
   async function userExist(){
