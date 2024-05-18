@@ -90,7 +90,14 @@ export default function Rooms() {
       userExist();
     }
   },[isLoaded])
-
+  useEffect(()=>{
+    // Play the out sound
+  function lobby() {
+    const audio = new Audio("/assets/lobby.mp3");
+    audio.play();
+  }
+  lobby();
+  },[])
   return (
     <div
       key="1"
@@ -134,7 +141,7 @@ export default function Rooms() {
                             <ArrowRightIcon className="ml-2 h-4 w-4" />
                           </Link>
                         </>
-                      ): room.roomstatus == 'Full' ? (
+                      ): room.roomstatus == 'full' ? (
                         <span className="px-3 py-1 bg-orange-500 text-white font-medium rounded-full text-sm">
                           {
                             room.roomstatus
