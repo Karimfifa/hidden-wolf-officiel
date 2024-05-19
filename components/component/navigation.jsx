@@ -1,9 +1,15 @@
 
 import Link from "next/link"
+import {motion} from "framer-motion"
 
 export default function Navigation() {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gray-900 text-white py-2 px-4 md:py-3 md:px-6 flex flex-col md:flex-row justify-between items-center">
+    <motion.div
+      initial={{opacity:0}}
+      animate={{opacity:1}}
+      transition={{duration:1.5}}
+    >
+      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-black to-gray-900 text-white py-2 px-4 md:py-3 md:px-6 flex flex-col md:flex-row justify-between items-center">
       <div className="flex justify-around w-full md:hidden">
         <Link
           className="flex justify-center items-center py-2 md:py-3 text-sm md:text-base font-medium transition-colors hover:bg-gray-800 focus:bg-gray-800 data-[active=true]:bg-indigo-600"
@@ -17,7 +23,7 @@ export default function Navigation() {
         >
           <UsersIcon className="w-5 h-5" />
         </Link>
-        <Link
+        <Link 
           className="flex justify-center items-center py-2 md:py-3 text-sm md:text-base font-medium transition-colors hover:bg-gray-800 focus:bg-gray-800 data-[active=true]:bg-indigo-600"
           href="store"
         >
@@ -61,6 +67,7 @@ export default function Navigation() {
         </Link> */}
       </div>
     </div>
+    </motion.div>
   )
 }
 
