@@ -36,6 +36,7 @@ export default function Invite({roomId ,roomName,userId,inviterName,inviterAvata
         <Button
           className="dark:bg-gray-800 dark:text-gray-50 dark:border-gray-700 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
           variant="outline"
+          style={{backgroundColor:'#008F92'}}
         >
           Invite Friends
         </Button>

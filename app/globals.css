@@ -1,7 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Bangers&display=swap');
 
+.bangers-regular {
+    font-family: "Bangers", system-ui;
+    font-weight: 400;
+    font-style: normal;
+  }
+  
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -24,6 +31,17 @@ body {
       rgb(var(--background-end-rgb))
     )
     rgb(var(--background-start-rgb));
+      font-family: "Bangers", system-ui;
+      font-weight: 400;
+      font-style: normal;
+    
+        
+}
+/* styles/globals.css */
+.font-bangers {
+  font-family: "Bangers", system-ui;
+  font-weight: 400;
+  font-style: normal;
 }
 
 @layer utilities {

@@ -40,7 +40,7 @@ export default function InvitationPopup({
 
   return (
     <motion.div drag animate={{ x: -2, y: 650 }} >
-      <div>
+      <div className="z-111">
         <div className="bg-red-400">
           <div className="fixed bottom-0 right-0 z-[100] flex flex-col gap-2 p-4 sm:p-6 w-full sm:w-auto max-w-[360px] sm:max-w-[420px] pointer-events-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
             <div className="[&:not(:last-child)]:mb-2 group bg-gray-500  dark:bg-gray-600 shadow-lg rounded-lg p-4 grid grid-cols-[25px_1fr] items-start gap-4 pointer-events-auto animate-in slide-in-from-bottom-5 data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[state=open]:animate-in fade-in-90 data-[state=closed]:animate-out fade-out-80 data-[swipe=move]:animate-out fade-out-x-100 data-[swipe=end]:animate-out fade-out-x-100">

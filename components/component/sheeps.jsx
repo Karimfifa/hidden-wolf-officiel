@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { createClient } from '@/lib/supabase/config';
 
-const SheepComponent = ({ roomId }) => {
+const SheepComponent = ({ roomId, userId }) => {
   const supabase = createClient();
   const [sheeps, setSheeps] = useState([]);
 
@@ -30,41 +30,87 @@ const SheepComponent = ({ roomId }) => {
     });
   }
 
+  async function playersChange() {
+    const {data} = await supabase
+      .channel('playerchange')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'players' },
+        (p) => {
+          getSheeps(); // Fetch sheep data whenever there's a change in players
+          console.log('players changed');
+        }
+      )
+      .subscribe();
 
-  async function playersChange(){
-    const {data,error} = await supabase
-    .channel('playerchange')
-    .on('postgres_changes',{event:'*',schema:'public',table:'players'},
-    (payload) =>{
-      getSheeps();
-      console.log('room changed');
-    }
-    )
-    .subscribe();
+    
   }
-
-  playersChange();
+  useEffect(()=>{
+    playersChange();
+  },[])
   useEffect(() => {
     // Get sheep data initially
+    
     getSheeps();
+  }, [roomId]); // Add roomId as a dependency to re-subscribe if it changes
 
-    // Update sheep positions every 1 second
-    const intervalId = setInterval(moveSheepsRandomly, 1000);
+  // Function to handle key press events for moving the user's sheep
+  const handleKeyPress = async (event) => {
+    if (!sheeps.some(sheep => sheep.playerId === userId)) return; // Ensure the user has a sheep to move
 
-    // Clean up interval on component unmount
-    return () => clearInterval(intervalId);
-  }, []); // Empty dependency array to run effect only once
+    const updatedSheeps = sheeps.map(sheep => {
+      if (sheep.playerId === userId) {
+        let newX = sheep.positionX;
+        let newY = sheep.positionY;
+        switch (event.key) {
+          case 'ArrowUp':
+            newY = Math.max(0, sheep.positionY - 1);
+            break;
+          case 'ArrowDown':
+            newY = Math.min(100, sheep.positionY + 1);
+            break;
+          case 'ArrowLeft':
+            newX = Math.max(0, sheep.positionX - 1);
+            break;
+          case 'ArrowRight':
+            newX = Math.min(100, sheep.positionX + 1);
+            break;
+          default:
+            break;
+        }
+        // Update the new position in the database
+        supabase
+          .from('players')
+          .update({ positionX: newX, positionY: newY })
+          .eq('playerId', userId)
+          .eq('roomId', roomId)
+          .then(({ error }) => {
+            if (error) {
+              console.error('Error updating position:', error);
+            }
+          });
+        return { ...sheep, positionX: newX, positionY: newY };
+      }
+      return sheep;
+    });
+    setSheeps(updatedSheeps);
+  };
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyPress);
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [sheeps, handleKeyPress]);
 
   return (
     <div className={`relative h-full w-full rounded-lg mb-56 overflow-hidden sheep-container`}>
       <div
         className="absolute top-0 left-0 h-full w-full rounded-md bg-gray-100 dark:bg-gray-800"
-        style={{ backgroundImage: `url('https://img.freepik.com/premium-vector/mountain-game-background_22191-30.jpg?w=900')`, backgroundSize: 'cover' }}
+        style={{ backgroundImage: `url('https://img.freepik.com/premium-vector/mountain-game-background_22191-30.jpg?w=900')`, backgroundSize: 'cover', opacity: 0.5 }}
       />
       {sheeps.map((sheep) => (
         <div
-          key={sheep.id}
-          className="sheep bg-transparent relative z-1 w-20"
+          key={sheep.playerId}
+          className="sheep bg-white relative z-10 w-20"
           style={{ top: `${sheep.positionY}%`, left: `${sheep.positionX}%` }}
         >
           <Image src={'https://img.freepik.com/free-vector/cute-sheep-flat-cartoon-style_1308-112075.jpg?w=740&t=st=1715876293~exp=1715876893~hmac=d71c01a263dc2788430da2a9747a2282b24174201951fff9308a7d003daf8df0'} className='rounded-full' width={100} height={100}  />

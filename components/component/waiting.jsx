@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert";
 import Counter from "@/components/component/counter";
 import Invite from "@/components/component/invite";
+import { motion } from "framer-motion";
 
 export default function Waiting() {
   const [rm, setRm] = useState([]);
@@ -58,13 +59,7 @@ export default function Waiting() {
       const res = await req.json();
       setRm(res.data);
       setMaxplayers(res.data.players);
-      // alert('room is' + res.full)
       if (res.full === 1) {
-        // await supabase
-        // .from('rooms')
-        // .update({'roomstatus':'Full'})
-        // .eq('roomUid',uid)
-        // .single();
         setFulll(true);
       } else {
         setFulll(false);
@@ -200,7 +195,7 @@ export default function Waiting() {
         "postgres_changes",
         { event: "*", schema: "public", table: "players" },
         (payload) => {
-          if (payload.new.roomId === uid) {
+          if (payload.new.roomId === uid ) {
             joinSound();
           } else if (
             payload.eventType == "DELETE" &&
@@ -234,7 +229,6 @@ export default function Waiting() {
       upsert();
       getRoomData();
       getPlayerList();
-      // checkMe(uid,playerId,currentUser,avatar); // Assuming this is optional
       hasRunOnce.current = true; // Set flag to prevent future runs
     }
   }, [isLoaded, fulll]);
@@ -247,9 +241,9 @@ export default function Waiting() {
     if (!rm.roomstatus == "waiting") {
       router.push("/closed");
     }
-    // if(rm.roomstatus == 'play'){
-    //   router.push('/room?uid='+rm.roomUid);
-    // }
+    if(rm.roomstatus == 'play'){
+      router.push('/room?uid='+rm.roomUid);
+    }
   }, [rm.roomstatus]);
   async function roomFull(){
     if(players.length >= rm.players){
@@ -270,36 +264,27 @@ export default function Waiting() {
   },[players,rm.players])
 
   return (
-    <div className="flex min-h-screen  w-full flex-col items-center justify-center bg-gradient-to-b from-gray-800 to-gray-950 px-4 py-8">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="flex min-h-screen w-full flex-col items-center justify-center  px-4 py-8"
+      style={{backgroundImage: 'linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12)'}}
+    >
       {rm.roomstatus == "play" ? <Counter target={rm.roomUid} /> : <></>}
-      {/* <AlertDialog>
-          <AlertDialogTrigger>Open</AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction>Continue</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog> */}
-      <div className="mx-auto w-full max-w-md rounded-lg bg-gray-900 p-6 shadow-lg">
-        <div className="flex flex-col  items-center justify-center gap-6">
-          <div className="flex flex-col items-center gap-2">
+      <div className="mx-auto w-full max-w-md rounded-lg bg-[#238373] p-6 shadow-lg">
+        <div className="flex flex-col items-center justify-center gap-6">
+          <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="text-2xl font-bold text-white">
               Waiting for players for{" "}
-              <span className="text-gray-400 ">{rm.roomName}</span>
+              <span className="text-gray-300">{rm.roomName}</span>
             </h1>
             <p className="text-gray-400">
               Join the room and wait for the game to start.
             </p>
           </div>
-          <div className="flex w-full flex-col items-start rounded-md bg-gray-800 px-4 py-3">
-            <div className="mb-2 flex w-full items-center justify-between">
+          <div className="w-full rounded-md  px-4 py-3" style={{border:'1px solid #00B287'}}>
+            <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <UsersIcon className="h-5 w-5 text-gray-400" />
                 <span className="text-gray-300">
@@ -311,7 +296,7 @@ export default function Waiting() {
               {rm.roomCreator == currentUser ? (
                 <Button
                   onClick={closeRoom}
-                  className="rounded-md px-4 py-2 text-sm font-medium bg-red-500 "
+                  className="rounded-md bg-[#E23E4C] px-4 py-2 text-sm font-medium"
                   variant="primary"
                 >
                   Close Game
@@ -319,39 +304,41 @@ export default function Waiting() {
               ) : (
                 <Button
                   onClick={quitRoom}
-                  className="rounded-md px-4 py-2 text-sm font-medium bg-orange-500 "
+                  className="rounded-md bg-orange-500 px-4 py-2 text-sm font-medium"
                   variant="primary"
                 >
                   Quit Game
                 </Button>
               )}
             </div>
-            <div className="grid grid-cols-2 w-full items-center p-4 rounded-md gap-4">
-              {players.length == 0 ? (
-                <div className="w-full flex flex-col bg-gray-500 p-2 h-10  rounded-lg">
-                  <div className=" w-4 h-4 bg-gray-600 rounded-full "></div>
-                  <div className="w-ful h-3 mt-3 bg-gray-600"></div>
-                </div>
+            <div className="grid w-full grid-cols-2 gap-4 p-4">
+              {players.length === 0 ? (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.5 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex h-10 w-full flex-col rounded-lg bg-gray-500 p-2"
+                >
+                  <div className="h-4 w-4 rounded-full bg-gray-600"></div>
+                  <div className="mt-3 h-3 w-full bg-gray-600"></div>
+                </motion.div>
               ) : (
-                <></>
-              )}
-              {players.map((player) => (
-                <>
+                players.map((player) => (
                   <div
                     key={player.id}
-                    className="w-full flex flex-col bg-gray-600 rounded-md p-2  "
+                    className="flex flex-col rounded-md bg-gray-600 p-2"
                   >
                     <Avatar>
                       <AvatarImage alt="Player 1" src={player.avatar} />
                       <AvatarFallback>P{player.id}</AvatarFallback>
                     </Avatar>
-                    <div key={player.id} className="flex-1">
+                    <div className="flex-1">
                       <h3 className="text-white">{player.playerName}</h3>
                       <p className="text-gray-400">{player.status}</p>
                     </div>
                   </div>
-                </>
-              ))}
+                ))
+              )}
             </div>
           </div>
           {rm.roomCreator == currentUser ? (
@@ -360,6 +347,7 @@ export default function Waiting() {
                 onClick={startGame}
                 className="w-full rounded-md px-4 py-2 text-sm font-medium"
                 variant="outline"
+                style={{backgroundColor:'#2CD261'}}
               >
                 Start Game
               </Button>
@@ -370,17 +358,18 @@ export default function Waiting() {
                   inviterName={currentUser}
                   inviterAvatar={avatar}
                   roomName={rm.roomName}
+                  
                 />
               ) : (
                 <></>
               )}
             </div>
           ) : (
-            <span>Waiting...</span>
+            <span className="text-white">Waiting...</span>
           )}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 
@@ -398,7 +387,7 @@ function UsersIcon(props) {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+      <path d="M16 21v-2a4 4 0 0 0-4-4H6 a4 4 0 0 0-4 4v2" />
       <circle cx="9" cy="7" r="4" />
       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
       <path d="M16 3.13a4 4 0 0 1 0 7.75" />

@@ -7,7 +7,7 @@ import Loading from "@/components/component/skeleton";
 import { Toaster, toast } from "sonner";
 import ListenToInvite from "@/components/component/listenToInvite";
 import Navigation from "./navigation";
-import { motion } from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 
 export default function Rooms() {
   const { user, isLoaded } = useUser();
@@ -18,6 +18,7 @@ export default function Rooms() {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
+  const controls = useAnimation();
 
   async function fetchRooms() {
     const { data, error } = await supabase
@@ -98,24 +99,30 @@ export default function Rooms() {
   }, [isLoaded]);
 
   useEffect(() => {
-    // function lobby() {
-    //   const audio = new Audio("/assets/lobby.mp3");
-    //   audio.play();
-    // }
-    // lobby();
+    controls.start({
+      opacity: 1,
+      transition: { duration: 0.5 }
+    });
   }, []);
 
   return (
-    <div
+    <motion.div
       key="1"
       className="flex flex-col h-screen bg-gray-900"
-      style={{backgroundImage:('url("./assets/ori.gif")'),backgroundSize:'cover'}}
+      style={{backgroundImage:('url("./assets/ori.gif")'),backgroundSize:'cover', fontFamily: 'Press Start 2P, cursive'}}
+      initial={{ opacity: 0 }}
+      animate={controls}
     >
       
       <ListenToInvite />
       <Toaster richColors />
       <main className="flex-1 overflow-auto text-white">
-        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 md:p-8 lg:p-10">
+        <motion.section
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-6 md:p-8 lg:p-10"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+        >
           {!loading ? (
             <Loading />
           ) : rooms.length == 0 ? (
@@ -130,12 +137,13 @@ export default function Rooms() {
               dragConstraints={{ top: -50, bottom: 100, left: -100, right: 100 }}
               drag
               key={room.id}
-              initial={{opacity:0}}
-              animate={{opacity:1}}
-              transition={{duration:0.5}}
-              whileHover={{scale:0.9}}
+              initial={{ opacity: 0, rotateY: 90, scale: 0.5 }}
+              animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+              transition={{ duration: 0.5 }}
+              whileHover={{ scale: 1.1, rotateY: -10 }}
+              style={{ transformStyle: "preserve-3d" }}
             >
-              <div className="bg-gradient-to-l  from-[#40916c] to-[#2a6f97] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <div className="bg-gradient-to-l from-[#40916c] to-[#2a6f97] rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <div className="p-4 md:p-6">
                   <div className="flex items-center justify-between">
                     <div>
@@ -169,11 +177,11 @@ export default function Rooms() {
                           <ArrowRightIcon className="ml-2 h-4 w-4" />
                         </Link>
                       </>
-                    ) : room.roomstatus == "full" ? (
+                    ) : room.roomstatus === "full" ? (
                       <span className="px-3 py-1 bg-orange-600 text-white font-medium rounded-full text-sm">
                         {room.roomstatus}
                       </span>
-                    ) : room.roomstatus == "closed" ? (
+                    ) : room.roomstatus === "closed" ? (
                       <span className="px-3 py-1 bg-red-900 text-white font-medium rounded-full text-sm">
                         Finished
                       </span>
@@ -187,10 +195,10 @@ export default function Rooms() {
               </div>
             </motion.div>
           ))}
-        </section>
+        </motion.section>
       </main>
       <Navigation />
-    </div>
+    </motion.div>
   );
 }
 
@@ -210,26 +218,6 @@ function ArrowRightIcon(props) {
     >
       <path d="M5 12h14" />
       <path d="m12 5 7 7-7 7" />
-    </svg>
-  );
-}
-
-function Dice1Icon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
-      <path d="M12 12h.01" />
     </svg>
   );
 }
@@ -257,43 +245,3 @@ function GamepadIcon(props) {
   );
 }
 
-function PlusIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M5 12h14" />
-      <path d="M12 5v14" />
-    </svg>
-  );
-}
-
-function ShoppingBagIcon(props) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-      <path d="M3 6h18" />
-      <path d="M16 10a4 4 0 0 1-8 0" />
-    </svg>
-  );
-}

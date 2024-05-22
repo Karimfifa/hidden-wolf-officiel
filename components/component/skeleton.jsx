@@ -1,52 +1,21 @@
-
 import { Skeleton } from "@/components/ui/skeleton"
 import { CardContent, Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 
 export default function Loading() {
   return (
-    <div className="flex flex-col p-5 w-screen space-y-4">
-      <div className="grid grid-cols-3 md:grid-cols-2 lg:grid-cols-3  gap-4">
-        <Card className="w-full bg-gradient-to-l  from-[#40916c] to-[#2a6f97]  bg-gradient-to-l  from-[#40916c] to-[#2a6f97] ">
-          <Skeleton className="h-32 w-full rounded-md" />
-          <CardContent className="space-y-2 p-4">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
-        <Card className="w-full bg-gradient-to-l  from-[#40916c] to-[#2a6f97] ">
-          <Skeleton className="h-32 w-full rounded-md" />
-          <CardContent className="space-y-2 p-4">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
-        <Card className="w-full bg-gradient-to-l  from-[#40916c] to-[#2a6f97] ">
-          <Skeleton className="h-32 w-full rounded-md" />
-          <CardContent className="space-y-2 p-4">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
-        <Card className="w-full bg-gradient-to-l  from-[#40916c] to-[#2a6f97] ">
-          <Skeleton className="h-32 w-full rounded-md" />
-          <CardContent className="space-y-2 p-4">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
-        <Card className="w-full bg-gradient-to-l  from-[#40916c] to-[#2a6f97] ">
-          <Skeleton className="h-32 w-full rounded-md" />
-          <CardContent className="space-y-2 p-4">
-            <Skeleton className="h-6 w-3/4" />
-            <Skeleton className="h-6 w-1/2" />
-            <Skeleton className="h-10 w-full" />
-          </CardContent>
-        </Card>
+    <div className="flex flex-col p-5 w-full space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        {Array.from({ length: 5 }).map((_, index) => (
+          <Card key={index} className="w-full bg-gradient-to-l from-[#40916c] to-[#2a6f97]">
+            <Skeleton className="h-32 w-full rounded-md" />
+            <CardContent className="space-y-2 p-4">
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-6 w-1/2" />
+              <Skeleton className="h-10 w-full" />
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   )

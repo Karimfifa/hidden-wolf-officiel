@@ -124,7 +124,7 @@ export default function Friends() {
     friendListener();
   },[isLoaded])
   return (
-    <div className="bg-gray-950 dark:bg-gray-950 p-6 rounded-lg shadow-md">
+    <div className="bg-gray-950 dark:bg-[#181818] p-6 rounded-lg shadow-md">
       <ListenToInvite />
       <Toaster richColors  />
       <div className="flex items-center justify-between mb-4">

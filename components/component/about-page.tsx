@@ -7,7 +7,7 @@ export default function AboutPage() {
   return (
     <div key="1" className="flex flex-col min-h-[100dvh]">
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-to-r from-[#145277] to-[#83d0cb]">
+        <section className="w-full py-12 md:py-24 lg:py-32 " style={{backgroundImage: 'linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12)'}}>
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
               <img

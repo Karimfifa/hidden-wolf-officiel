@@ -3,7 +3,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 const Counter = ({target}) => {
-    const [second, setSecond] = useState(0);
+    const [second, setSecond] = useState(3);
     const router = useRouter();
     // Play the countdowm sound
     function countdownSound(){
@@ -12,11 +12,11 @@ const Counter = ({target}) => {
     }
         useEffect(() => {
         const intervalId = setInterval(() => {
-            if (second === 3) {
+            if (second === 0) {
                 router.push('/room?uid='+target);
                 return ;
             }
-            setSecond(prevSecond => prevSecond + 1);
+            setSecond(prevSecond => prevSecond - 1);
         }, 1000);
 
         // Cleanup function to clear the interval when component unmounts
