@@ -48,7 +48,7 @@ export default function Waiting() {
   // Get room data by UID
   async function getRoomData() {
     try {
-      const req = await fetch("http://localhost:3000/api/fetchRoomInfo", {
+      const req = await fetch("https://hassali.vercel.app/api/fetchRoomInfo", {
         method: "POST",
         cache: "no-cache",
         headers: {
