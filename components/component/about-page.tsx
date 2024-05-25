@@ -6,7 +6,7 @@ import Image from "next/image"
 
 export default function AboutPage() {
   return (
-    <div key="1" className="flex flex-col min-h-[100dvh]">
+    <div key="2" className="flex flex-col min-h-[100dvh]">
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32 " style={{backgroundImage: 'linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12)'}}>
           <div className="container px-4 md:px-6">
