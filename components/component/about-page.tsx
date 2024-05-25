@@ -2,6 +2,7 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { SheetTrigger, SheetContent, Sheet } from "@/components/ui/sheet"
+import Image from "next/image"
 
 export default function AboutPage() {
   return (
@@ -10,11 +11,11 @@ export default function AboutPage() {
         <section className="w-full py-12 md:py-24 lg:py-32 " style={{backgroundImage: 'linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12)'}}>
           <div className="container px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-2 lg:gap-12">
-              <img
+              <Image
                 alt="Features"
                 className="mx-auto aspect-video overflow-hidden rounded-xl object-cover sm:w-full"
                 height="550"
-                src="/assets/wolf.png"
+                src="/assets/wolf.webP"
                 width="550"
               />
               <div className="space-y-2">
