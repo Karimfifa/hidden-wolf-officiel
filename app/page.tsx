@@ -8,7 +8,7 @@ export default function Home() {
 
   return (
     <>
-    <h1>IM FROM REDMI 9</h1>
+    
     <AboutPage />
     </>
    
