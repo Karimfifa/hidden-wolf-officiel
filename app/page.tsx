@@ -8,7 +8,8 @@ export default function Home() {
 
   return (
     <>
-    <h1>im shark </h1>
+    <h1>im shark  </h1>
+    
     <AboutPage />
     </>
    
